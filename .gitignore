@@ -1,0 +1,7 @@
+build/
+bin/
+*.root
+*.csv
+*.o
+*.d
+.vscode/
