@@ -34,8 +34,13 @@ void EventAction::EndOfEventAction(const G4Event*)
     G4double yNuc = (fNucleusEdep > 0.) ? (fNucleusEdep / keV) / (nucChord / um) : 0.;
     G4double zNuc = (fNucleusEdep > 0.) ? (fNucleusEdep / joule) / (nucMass / kg) * 1000.0 : 0.;
     
-    G4double effectiveChord = (fAugerLengthCyto > 0.) ? fAugerLengthCyto : fDet->GetCytoplasmChord();
-    G4double yCyto = (fCytoplasmEdep > 0.) ? (fCytoplasmEdep / keV) / (effectiveChord / um) : 0.;
+    // G4double effectiveChord = (fAugerLengthCyto > 0.) ? fAugerLengthCyto : fDet->GetCytoplasmChord();
+    // G4double yCyto = (fCytoplasmEdep > 0.) ? (fCytoplasmEdep / keV) / (effectiveChord / um) : 0.;
+    // G4double zCyto = (fCytoplasmEdep > 0.) ? (fCytoplasmEdep / joule) / (cytoMass / kg) * 1000.0 : 0.;
+
+    G4double meanChordCyto = fDet->GetCytoplasmChord();
+
+    G4double yCyto = (fCytoplasmEdep > 0.) ? (fCytoplasmEdep / keV) / (meanChordCyto / um) : 0.;
     G4double zCyto = (fCytoplasmEdep > 0.) ? (fCytoplasmEdep / joule) / (cytoMass / kg) * 1000.0 : 0.;
 
 

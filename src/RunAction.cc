@@ -24,16 +24,14 @@ RunAction::RunAction() : G4UserRunAction() {
 RunAction::~RunAction() = default;
 
 void RunAction::BeginOfRunAction(const G4Run*) {
-    if (G4Threading::IsMasterThread()) { 
-        auto analysisManager = G4AnalysisManager::Instance();
-        analysisManager->OpenFile("../output/microdosimetria.csv"); // Per metterlo fuori dalla cartella di build
-    }
+    // RIMOSSO l'if del MasterThread: serve a tutti i thread!
+    auto analysisManager = G4AnalysisManager::Instance();
+    analysisManager->OpenFile("../output/microdosimetria.csv"); 
 }
 
 void RunAction::EndOfRunAction(const G4Run*) {
-    if (G4Threading::IsMasterThread()) {
-        auto analysisManager = G4AnalysisManager::Instance();
-        analysisManager->Write();
-        analysisManager->CloseFile();
-    }
+    // RIMOSSO l'if del MasterThread: serve a tutti i thread!
+    auto analysisManager = G4AnalysisManager::Instance();
+    analysisManager->Write();
+    analysisManager->CloseFile();
 }
