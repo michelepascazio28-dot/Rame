@@ -20,6 +20,7 @@ public:
     void AddCytoplasmEdep(G4double edep) { fCytoplasmEdep += edep; }
     void AddAugerTotalLength(G4double len) { fAugerLengthTotal += len; }
     void AddAugerCytoLength(G4double len) { fAugerLengthCyto += len; }
+    void SetProcessID(G4int id) { fProcessID = id; }
 
 private:
     const DetectorConstruction* fDet;
@@ -27,6 +28,7 @@ private:
     G4double fCytoplasmEdep;
     G4double fAugerLengthCyto = 0;  // Percorso solo nel citoplasma
     G4double fAugerLengthTotal = 0; // Percorso totale ovunque
+    G4int fProcessID;
 };
 
 #endif

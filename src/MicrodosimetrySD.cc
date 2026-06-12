@@ -25,4 +25,5 @@ G4bool MicrodosimetrySD::ProcessHits(G4Step* step, G4TouchableHistory*)
         eventAction->AddCytoplasmEdep(edep);
     }
     return true;
+    
 }

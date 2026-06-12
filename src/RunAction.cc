@@ -18,6 +18,7 @@ RunAction::RunAction() : G4UserRunAction() {
     man->CreateNtupleDColumn("zCyto_mGy");
     man->CreateNtupleDColumn("TotalTrackLength_um");
     man->CreateNtupleDColumn("CytoTrackLength_um");
+    man->CreateNtupleDColumn("ProcessID");
     man->FinishNtuple();
 }
 

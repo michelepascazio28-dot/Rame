@@ -10,6 +10,7 @@ EventAction::EventAction(const DetectorConstruction* det)
    fCytoplasmEdep(0.),
    fAugerLengthTotal(0.),
    fAugerLengthCyto(0.),
+   fProcessID(0),
    fDet(det)
 {}
 
@@ -38,10 +39,13 @@ void EventAction::EndOfEventAction(const G4Event*)
     // G4double yCyto = (fCytoplasmEdep > 0.) ? (fCytoplasmEdep / keV) / (effectiveChord / um) : 0.;
     // G4double zCyto = (fCytoplasmEdep > 0.) ? (fCytoplasmEdep / joule) / (cytoMass / kg) * 1000.0 : 0.;
 
-    G4double meanChordCyto = fDet->GetCytoplasmChord();
+    G4double effectiveLength = (fAugerLengthCyto > 0.) ? fAugerLengthCyto : fDet->GetCytoplasmChord();
 
-    G4double yCyto = (fCytoplasmEdep > 0.) ? (fCytoplasmEdep / keV) / (meanChordCyto / um) : 0.;
-    G4double zCyto = (fCytoplasmEdep > 0.) ? (fCytoplasmEdep / joule) / (cytoMass / kg) * 1000.0 : 0.;
+    // y = E / l
+    G4double yCyto = (fCytoplasmEdep > 0.) ? (fCytoplasmEdep / keV) / (effectiveLength / um) : 0.;
+
+    // Calcolo Specific Energy (z)
+    G4double zCyto = (fCytoplasmEdep > 0.) ? (fCytoplasmEdep / joule) / (fDet->GetCytoplasmMass() / kg) * 1000.0 : 0.;
 
 
     G4double totalEdep = fNucleusEdep + fCytoplasmEdep;
@@ -62,5 +66,6 @@ void EventAction::EndOfEventAction(const G4Event*)
     man->FillNtupleDColumn(5, zCyto);
     man->FillNtupleDColumn(6, fAugerLengthTotal/um);
     man->FillNtupleDColumn(7, fAugerLengthCyto/um);
+    man->FillNtupleDColumn(8, fProcessID);
     man->AddNtupleRow();
 }

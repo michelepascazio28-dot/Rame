@@ -14,7 +14,10 @@
 /gps/pos/radius 2.5 um
 /gps/pos/confine Nucleus_Phys 
 
+# /gps/pos/radius 4.5 um
+# /gps/pos/confine Cell_Phys 
+
 /gps/ang/type iso
 # 3. Lancio (senza vis attiva qui)
 /run/printProgress 100
-/run/beamOn 100000
+/run/beamOn 1000

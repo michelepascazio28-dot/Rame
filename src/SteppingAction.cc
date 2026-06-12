@@ -8,38 +8,51 @@
 #include "G4VProcess.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4Track.hh"
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#include "G4UnitsTable.hh" // Per stampare meglio i log
 
 SteppingAction::SteppingAction(EventAction* eventAction) 
  : G4UserSteppingAction(), fEventAction(eventAction) 
 {
-    // Recupera i puntatori UNA SOLA VOLTA alla costruzione
     auto runManager = G4RunManager::GetRunManager();
     auto det = static_cast<const DetectorConstruction*>(runManager->GetUserDetectorConstruction());
+    
     fLogicNucleus = det->GetLogicNucleus();
     fLogicCell    = det->GetLogicCell();
+
+    // Debug: Verifica se i volumi sono stati trovati correttamente
+    if (!fLogicNucleus) G4cout << "ATTENZIONE: fLogicNucleus non trovato!" << G4endl;
+    if (!fLogicCell)    G4cout << "ATTENZIONE: fLogicCell non trovato!" << G4endl;
 }
 
-SteppingAction::~SteppingAction() 
-{}
+SteppingAction::~SteppingAction() {}
 
 void SteppingAction::UserSteppingAction(const G4Step* step) 
 {
     G4Track* track = step->GetTrack();
     if (track->GetDefinition()->GetParticleName() != "e-") return;
     
-    G4double eKin = track->GetKineticEnergy();
-    if (eKin >= 10.0 * keV) return; // Filtro energetico (solo Auger)
-
+    G4double edep = step->GetTotalEnergyDeposit();
     G4double stepLen = step->GetStepLength();
-    G4String volName = step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume()->GetName();
+    G4LogicalVolume* vol = step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
 
-    // 1. Aggiorna sempre il totale
+    // 1. Sempre contare la lunghezza totale (indipendentemente dal volume)
     fEventAction->AddAugerTotalLength(stepLen);
 
-    // 2. Aggiorna il citoplasma solo se siamo lì dentro
-    if (volName == "Cell_Log") {
+    // 2. Logica Additiva per Nucleo e Citoplasma
+    if (vol == fLogicNucleus) {
+        // --- Energia ---
+        fEventAction->AddNucleusEdep(edep);
+        fEventAction->AddCytoplasmEdep(edep); // Additivo
+        
+        // --- Lunghezza (Fondamentale per Lineal Energy!) ---
+        fEventAction->AddAugerTotalLength(stepLen);
+        fEventAction->AddAugerCytoLength(stepLen); // Additivo
+    } 
+    else if (vol == fLogicCell) {
+        // --- Energia ---
+        fEventAction->AddCytoplasmEdep(edep);
+        
+        // --- Lunghezza ---
         fEventAction->AddAugerCytoLength(stepLen);
     }
 }
-
