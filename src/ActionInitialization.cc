@@ -5,6 +5,7 @@
 #include "SteppingAction.hh"
 #include "DetectorConstruction.hh"
 #include "MicrodosimetrySD.hh"
+#include "TrackingAction.hh"
 
 ActionInitialization::ActionInitialization(DetectorConstruction* det)
  : G4VUserActionInitialization(), fDet(det)
@@ -25,16 +26,15 @@ void ActionInitialization::Build() const
     RunAction* runAction = new RunAction();
     SetUserAction(runAction);
 
-    // Rimuovi 'runAction' dal costruttore di EventAction
     EventAction* eventAction = new EventAction(fDet); 
     SetUserAction(eventAction);
 
-    // --- IL PONTE ---
-    auto sd = fDet->GetMicroSD();
+    MicrodosimetrySD* sd = fDet->GetMicroSD(); // GetMicroSD() è un getter in DetectorConstruction.hh per ottenere il puntatore alla nostra MicrodosimetrySD
     if (sd) {
         sd->SetEventAction(eventAction);
     }
-    // ----------------
 
     SetUserAction(new SteppingAction(eventAction));
+
+    SetUserAction(new TrackingAction(eventAction));
 }

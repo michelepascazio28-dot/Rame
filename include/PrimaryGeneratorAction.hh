@@ -16,7 +16,7 @@ public:
     virtual void GeneratePrimaries(G4Event* anEvent) override;
 
 private:
-    G4GeneralParticleSource* fParticleSource; // Sostituisci il puntatore
+    G4GeneralParticleSource* fParticleSource;
 };
 
 #endif

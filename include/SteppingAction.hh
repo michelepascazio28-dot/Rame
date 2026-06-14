@@ -8,7 +8,7 @@ class EventAction; // Forward declaration
 
 class SteppingAction : public G4UserSteppingAction {
 public:
-    SteppingAction(EventAction* eventAction); // Deve accettare il puntatore!
+    SteppingAction(EventAction* eventAction);
     virtual ~SteppingAction();
     virtual void UserSteppingAction(const G4Step*);
 

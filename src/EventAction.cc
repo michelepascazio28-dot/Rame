@@ -22,16 +22,18 @@ void EventAction::BeginOfEventAction(const G4Event*)
     fCytoplasmEdep = 0.;
     fAugerLengthTotal = 0.;
     fAugerLengthCyto = 0.;
+    fProcessID = 0;
 }
 
 void EventAction::EndOfEventAction(const G4Event*)
 {
     // Calcoli
-    G4double nucChord = fDet->GetNucleusChord();
-    G4double nucMass  = fDet->GetNucleusMass();
-    G4double cytoMass = fDet->GetCytoplasmMass();
+    G4double nucChord = fDet->GetNucleusChord(); // è stato definito in DetectorConstruction.hh e poi in DetectorConstruction.cc, consiste nella lunghezza media del percorso nel nucleo, usata per calcolare y del nucleo
+    G4double nucMass  = fDet->GetNucleusMass(); // idem per la massa del nucleo, usata per calcolare z del nucleo
+    G4double cytoMass = fDet->GetCytoplasmMass(); // massa del citoplasma, usata per calcolare z del citoplasma
     
-    // Se non c'è deposito, Y e Z sono 0
+    // Se non c'è deposito, y=0 e z=0
+    // Sintassi : variabile = (condizione) ? valore_se_vero : valore_se_falso;
     G4double yNuc = (fNucleusEdep > 0.) ? (fNucleusEdep / keV) / (nucChord / um) : 0.;
     G4double zNuc = (fNucleusEdep > 0.) ? (fNucleusEdep / joule) / (nucMass / kg) * 1000.0 : 0.;
     

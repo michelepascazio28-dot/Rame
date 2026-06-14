@@ -22,6 +22,8 @@ public:
     void AddAugerCytoLength(G4double len) { fAugerLengthCyto += len; }
     void SetProcessID(G4int id) { fProcessID = id; }
 
+    G4int GetProcessID() const { return fProcessID; }
+
 private:
     const DetectorConstruction* fDet;
     G4double fNucleusEdep;

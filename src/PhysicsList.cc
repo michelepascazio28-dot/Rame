@@ -43,7 +43,7 @@ void PhysicsList::ConstructProcess()
 
 void PhysicsList::SetCuts()
 {
-    G4double cutValue = 10* eV; 
+    G4double cutValue = 10* um; 
     SetCutsWithDefault();
     SetCutValue(cutValue, "e-");
     SetCutValue(cutValue, "e+");
