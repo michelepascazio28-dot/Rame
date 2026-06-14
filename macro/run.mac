@@ -20,4 +20,4 @@
 /gps/ang/type iso
 # 3. Lancio (senza vis attiva qui)
 /run/printProgress 100
-/run/beamOn 2000
+/run/beamOn 20000
