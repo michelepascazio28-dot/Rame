@@ -1,4 +1,6 @@
-# macro for rdecay01
+# macro for 64Cu
+#
+/analysis/setFileName Cu64_simulation
 #
 /control/cout/ignoreThreadsExcept 0
 /control/verbose 2
