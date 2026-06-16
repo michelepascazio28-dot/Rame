@@ -9,24 +9,21 @@
 
 int main(int argc, char** argv)
 {
-    // 1. Rilevamento modalità interattiva (se non passi file macro)
+    // 1. Rilevamento modalità interattiva
     G4UIExecutive* ui = nullptr;
     if (argc == 1) {
         ui = new G4UIExecutive(argc, argv);
     }
 
-    // 2. Creazione del Run Manager
-    G4RunManager* runManager = new G4RunManager;
+    // 2. Creazione del Run Manager tramite Factory
+    // Usa 'Default' per creare il manager corretto automaticamente
+    auto* runManager = G4RunManagerFactory::CreateRunManager(G4RunManagerType::Serial);
 
-    // 3. Inizializzazione Detector
+    // 3. Inizializzazione Detector, Physics e Actions
     DetectorConstruction* detector = new DetectorConstruction();
     runManager->SetUserInitialization(detector);
-
-    // e Inizializzazione Physics List
     runManager->SetUserInitialization(new PhysicsList());
-    
-    // 4. Inizializzazione azioni (PASSAGGIO DEL DETECTOR AL REGISTER)
-    runManager->SetUserInitialization(new ActionInitialization(detector));
+    runManager->SetUserInitialization(new ActionInitialization()); // Assicurati che ActionInitialization accetti il puntatore!
 
     // 5. Inizializzazione visualizzazione
     G4VisManager* visManager = new G4VisExecutive();

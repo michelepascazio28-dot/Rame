@@ -2,15 +2,15 @@
 #define DetectorConstruction_h 1
 
 #include "G4VUserDetectorConstruction.hh"
+#include "G4SystemOfUnits.hh"
 #include "globals.hh"
+#include <cfloat>
 #include <memory>
 
-class G4VPhysicalVolume;
-class G4LogicalVolume;
 class G4Material;
-class G4Region;
-class MicrodosimetrySD;
-class EventAction;
+class G4LogicalVolume;
+class G4VPhysicalVolume;
+class DetectorMessenger;
 
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -21,52 +21,35 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4VPhysicalVolume* Construct() override;
     void ConstructSDandField() override;
 
-
-    void SetTrackingCut(G4double val);
-    void SetMaxStepSize(G4double val);
-
+    // Getter necessari per il Sensitive Detector
     G4LogicalVolume* GetLogicNucleus() const { return fLogicNucleus; }
-    G4LogicalVolume* GetLogicCell() const { return fLogicCell; }
+    G4LogicalVolume* GetLogicCell() const    { return fLogicCell; }
 
-    void UpdateGeometryParameters(); // Metodo per calcolare massa/corda
-    G4double GetNucleusMass() const;
-    G4double GetNucleusChord() const;
+    void SetTrackingCut(G4double val)    { fpTrackingCut = val; }
+    void SetMaxStepSize(G4double val)    { fpMaxStepSize = val; }
+    void SetNucleusRadius(G4double val)  { fNucleusRadius = val; }
+    void SetCellRadius(G4double val)     { fCellRadius = val; }
 
-    MicrodosimetrySD* GetMicroSD() const { return fMicroSD; }
-
-    G4double GetCytoplasmChord() const;
-    G4double GetCytoplasmMass() const;
-
-    void SetEventAction(EventAction* ea) { fEventAction = ea; }
-    
   private:
     void DefineMaterials();
     G4VPhysicalVolume* DefineVolumes();
 
-    // Materiali
-    G4Material* fpCytoplasmMaterial{nullptr};
-    G4Material* fpWaterMaterial{nullptr};
+    // std::unique_ptr<DetectorMessenger> fDetectorMessenger;
 
-    // Volumi Logici
-    G4LogicalVolume* fLogicWorld{nullptr};
-    G4LogicalVolume* fLogicCell{nullptr};
-    G4LogicalVolume* fLogicNucleus{nullptr};
-    G4Region* fDNARegion{nullptr};
+    // Volumi Logici (fondamentali per assegnare il SD)
+    G4LogicalVolume* fLogicCell = nullptr;
+    G4LogicalVolume* fLogicNucleus = nullptr;
 
-    // Parametri e Variabili
-    G4double fWorldSize;
-    G4double fCellRadius;
-    G4double fNucleusRadius;
-    G4double fNucleusMass;
-    G4double fNucleusChordLength;
-    
+    // Variabili
     G4double fpTrackingCut;
-    G4double fpMaxStepSize;
-
-    // Sensore
-    MicrodosimetrySD* fMicroSD{nullptr};
-
-    EventAction* fEventAction = nullptr;
+    G4double fpMaxStepSize = DBL_MAX;
+    G4double fNucleusRadius;
+    G4double fCellRadius;
+    
+    // Materiali
+    G4Material* fpWaterMaterial = nullptr;
+    G4Material* fpCytoplasmMaterial = nullptr;
+    G4Material* fpVacuumMaterial = nullptr;
 };
 
 #endif

@@ -1,22 +1,23 @@
-#ifndef PrimaryGeneratorAction_hh
-#define PrimaryGeneratorAction_hh 1
+#ifndef PrimaryGeneratorAction_h
+#define PrimaryGeneratorAction_h 1
 
 #include "G4VUserPrimaryGeneratorAction.hh"
+#include "G4GeneralParticleSource.hh" // Include necessario!
 #include "globals.hh"
-#include "G4GeneralParticleSource.hh"
 
-class G4ParticleGun;
 class G4Event;
 
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
-public:
+  public:
     PrimaryGeneratorAction();
-    virtual ~PrimaryGeneratorAction();
-    virtual void GeneratePrimaries(G4Event* anEvent) override;
+    ~PrimaryGeneratorAction() override;
 
-private:
-    G4GeneralParticleSource* fParticleSource;
+    void GeneratePrimaries(G4Event*) override;
+    G4GeneralParticleSource* GetParticleSource() { return fParticleSource; }
+
+  private:
+    G4GeneralParticleSource* fParticleSource = nullptr;
 };
 
 #endif
