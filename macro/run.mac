@@ -19,5 +19,5 @@
 /gps/ang/type iso
 
 # --- Lancio ---
-#/run/printProgress 100 
-/run/beamOn 100
+/run/printProgress 5000
+/run/beamOn 100000
