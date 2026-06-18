@@ -20,4 +20,4 @@
 
 # --- Lancio ---
 /run/printProgress 5000
-/run/beamOn 100000
+/run/beamOn 500000
