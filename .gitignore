@@ -1,0 +1,8 @@
+# Cartelle di build e file di output
+build/
+# *.root
+# *.out
+
+# File di sistema e temporanei
+.DS_Store
+*.log

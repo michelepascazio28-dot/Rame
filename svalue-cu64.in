@@ -1,0 +1,54 @@
+# MT
+/run/numberOfThreads 8
+#
+# Atomic deexcitation activation
+/process/em/deexcitationIgnoreCut true
+/process/em/fluo true
+/process/em/pixe true
+/process/em/auger true
+/process/em/augerCascade true
+#
+# Materials
+/svalue/det/setWorldMat G4_WATER
+/svalue/det/setCytoMat G4_WATER
+/svalue/det/setNuclMat G4_WATER
+#
+# Geometry
+/svalue/det/setNuclRadius 4 um
+/svalue/det/setCytoThickness 5 um
+#
+# Tracking cut
+/svalue/det/setTrackingCut 7.4 eV
+#
+# Physics
+/svalue/phys/addPhysics dna_opt4
+/svalue/phys/addPhysics RadioactiveDecayPhysics
+#
+# Run initialization
+/run/initialize
+#
+# Radioactive decay settings (must be after /run/initialize)
+/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
+/process/had/rdm/verbose 1
+#
+# Iodine (53, 125)
+/gun/particle ion
+/gun/ion 29 64 0 0
+/gun/energy 0 eV
+#
+# Histograms
+/analysis/setFileName cu64
+/analysis/h1/set  0 200 0 10 keV #All Auger e- track energy
+/analysis/h1/set  1 75 0.5 1 keV #Low Energetic Auger e- track energy
+/analysis/h1/set  5 120 0 0.03 keV #All energy deposit in cytoplasm
+/analysis/h1/set  6 800 0 1e-24 keV #All energy deposit in nucleus
+/analysis/h1/set  7 100 0 0.015 um #True track length of the primary particle
+/analysis/h1/set  10 100 0 1e-305 um #True track length of charged secondaries
+
+#
+# Verbosity
+/tracking/verbose 0
+/run/printProgress 100
+#
+# Beam on
+/run/beamOn 500
