@@ -32,14 +32,14 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4double radius = fDetector->GetNuclRadius();
 
   // Distribuzione uniforme solo nel citoplasma escluso il nucleo
-  // G4double R_min = radius;
-  // G4double R_max = radius + thickness;
+  G4double R_min = radius;
+  G4double R_max = radius + thickness;
 
-  // Distribuzione uniforma solo nel nucleo
-  G4double R_min = 0;
-  G4double R_max = radius;
+  // Distribuzione uniforme solo nel nucleo
+  // G4double R_min = 0;
+  // G4double R_max = radius;
 
-  // Distribuzione uniforme in tutto il citoplsma e nucleo
+  // Distribuzione uniforme in tutto il citoplasma e nucleo
   // G4double R_min = 0;
   // G4double R_max = radius + thickness;
 

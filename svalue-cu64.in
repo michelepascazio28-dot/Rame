@@ -15,7 +15,7 @@
 #
 # Geometry
 /svalue/det/setNuclRadius 4 um
-/svalue/det/setCytoThickness 5 um
+/svalue/det/setCytoThickness 1 um
 #
 # Tracking cut
 /svalue/det/setTrackingCut 7.4 eV
