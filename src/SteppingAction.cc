@@ -69,15 +69,19 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   // Ignore energy deposited by the primary ion itself and count only secondary tracks.
   if (trackID == 1) return;
 
-  // Total energy deposit in cytoplasm or nucleus from secondaries only
+  // Total energy deposit in the whole cell (cytoplasm + nucleus) from secondaries only
 
-  if (aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()
-      == fDetectorConstruction->GetCytoLogicalVolume())
-    fEventAction->AddCytoEdep(edep);
-
-  if (aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()
-      == fDetectorConstruction->GetNuclLogicalVolume())
+  const G4LogicalVolume* volume = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();
+  
+  // qui vado ad aggiungere l'energia depositata nell'intera cellula (citoplasma + nucleo)
+  if (volume == fDetectorConstruction->GetCytoLogicalVolume() ||
+      volume == fDetectorConstruction->GetNuclLogicalVolume()) {
+    fEventAction->AddCellEdep(edep);
+  }
+  // qui rimango come prima a sommare l'energia depositata solo nel nucleo 
+  if (volume == fDetectorConstruction->GetNuclLogicalVolume()) {
     fEventAction->AddNuclEdep(edep);
+  }
 
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 

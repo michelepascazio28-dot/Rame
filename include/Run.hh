@@ -58,8 +58,8 @@ class Run : public G4Run
     void AddProjRange(G4double x);
     void AddStepSize(G4int nb, G4double st);
 
-    void AddCytoEdep(G4double e);
-    G4double GetCytoEdep() const { return fCytoEdeposit; };
+    void AddCellEdep(G4double e);
+    G4double GetCytoEdep() const { return fCellEdeposit; };
 
     void AddNuclEdep(G4double e);
     G4double GetNuclEdep() const { return fNuclEdeposit; };
@@ -72,7 +72,7 @@ class Run : public G4Run
     const DetectorConstruction* fDetector;
     G4ParticleDefinition* fParticle;
     G4double fEkin;
-    G4double fCytoEdeposit, fCytoEdeposit2;
+    G4double fCellEdeposit, fCellEdeposit2;
     G4double fNuclEdeposit, fNuclEdeposit2;
     G4double fTrackLen, fTrackLen2;
     G4double fProjRange, fProjRange2;

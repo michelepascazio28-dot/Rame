@@ -52,12 +52,12 @@ class EventAction : public G4UserEventAction
     virtual void BeginOfEventAction(const G4Event*);
     virtual void EndOfEventAction(const G4Event*);
 
-    inline void AddCytoEdep(G4double edep) { fCytoEdep += edep; }
+    inline void AddCellEdep(G4double edep) { fCellEdep += edep; }
 
     inline void AddNuclEdep(G4double edep) { fNuclEdep += edep; }
 
   private:
-    G4double fCytoEdep;
+    G4double fCellEdep;
     G4double fNuclEdep;
 };
 

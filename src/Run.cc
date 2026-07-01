@@ -19,8 +19,8 @@ Run::Run(const DetectorConstruction* detector)
     fDetector(detector),
     fParticle(0),
     fEkin(0.),
-    fCytoEdeposit(0.),
-    fCytoEdeposit2(0.),
+    fCellEdeposit(0.),
+    fCellEdeposit2(0.),
     fNuclEdeposit(0.),
     fNuclEdeposit2(0.),
     fTrackLen(0.),
@@ -47,10 +47,10 @@ void Run::SetPrimary(G4ParticleDefinition* particle, G4double energy)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void Run::AddCytoEdep(G4double e)
+void Run::AddCellEdep(G4double e)
 {
-  fCytoEdeposit += e;
-  fCytoEdeposit2 += e * e;
+  fCellEdeposit += e;
+  fCellEdeposit2 += e * e;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -100,8 +100,8 @@ void Run::Merge(const G4Run* run)
 
   // Accumulate sums
 
-  fCytoEdeposit += localRun->fCytoEdeposit;
-  fCytoEdeposit2 += localRun->fCytoEdeposit2;
+  fCellEdeposit += localRun->fCellEdeposit;
+  fCellEdeposit2 += localRun->fCellEdeposit2;
   fNuclEdeposit += localRun->fNuclEdeposit;
   fNuclEdeposit2 += localRun->fNuclEdeposit2;
 
@@ -141,19 +141,19 @@ void Run::EndOfRun()
 
   // Compute S-value for cytoplasm (C<-C)
 
-  fCytoEdeposit /= numberOfEvent;
-  fCytoEdeposit2 /= numberOfEvent;
-  G4double rmsCyto = fCytoEdeposit2 - fCytoEdeposit * fCytoEdeposit;
+  fCellEdeposit /= numberOfEvent;
+  fCellEdeposit2 /= numberOfEvent;
+  G4double rmsCyto = fCellEdeposit2 - fCellEdeposit * fCellEdeposit;
   if (rmsCyto > 0.)
     rmsCyto = std::sqrt(rmsCyto);
   else
     rmsCyto = 0.;
 
   G4cout.precision(6);
-  G4cout << "\n Total Energy deposited in cytoplasm = " << G4BestUnit(fCytoEdeposit, "Energy")
+  G4cout << "\n Total Energy deposited in cytoplasm = " << G4BestUnit(fCellEdeposit, "Energy")
          << " +- " << G4BestUnit(rmsCyto, "Energy") << G4endl;
 
-  G4double sValueCyto = fCytoEdeposit / fDetector->GetCytoMass();
+  G4double sValueCyto = fCellEdeposit / fDetector->GetCytoMass();
   G4double rmsSValueCyto = rmsCyto / fDetector->GetCytoMass();
   sValueCyto *= 1000.; // Convert from Gy/Bq.s to mGy/Bq.s
   rmsSValueCyto *= 1000.; // Convert from Gy/Bq.s to mGy/Bq.s

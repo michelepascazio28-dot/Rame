@@ -57,7 +57,7 @@ EventAction::~EventAction() {}
 void EventAction::BeginOfEventAction(const G4Event*)
 {
   // Energy deposited per event
-  fCytoEdep = 0.;
+  fCellEdep = 0.;
   fNuclEdep = 0.;
 }
 
@@ -67,15 +67,15 @@ void EventAction::EndOfEventAction(const G4Event*)
 {
   // Plot energy deposited per event
 
-  if (fCytoEdep > 0.) {
+  if (fCellEdep > 0.) {
     Run* run = static_cast<Run*>(G4RunManager::GetRunManager()->GetNonConstCurrentRun());
 
-    run->AddCytoEdep(fCytoEdep);
+    run->AddCellEdep(fCellEdep);
 
     // G4cout << "*** Edep cumulated in cytoplasm (eV) = " << run->GetCytoEdep()/eV << G4endl;
 
     G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-    analysisManager->FillH1(5, fCytoEdep);
+    analysisManager->FillH1(5, fCellEdep);
   }
 
   if (fNuclEdep > 0.) {
