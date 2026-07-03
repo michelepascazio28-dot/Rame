@@ -30,7 +30,6 @@
 #include "G4NuclideTable.hh"
 #include "G4RadioactiveDecayPhysics.hh"
 #include "G4SystemOfUnits.hh"
-#include "G4DecayPhysics.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -55,7 +54,6 @@ PhysicsList::PhysicsList() : G4VModularPhysicsList(), fEmPhysicsList(0), fMessen
   G4NuclideTable::GetInstance()->SetLevelTolerance(1.0 * eV);
 
   fRadDecay = new G4RadioactiveDecayPhysics();
-  fDecayPhysics = new G4DecayPhysics();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -65,7 +63,6 @@ PhysicsList::~PhysicsList()
   delete fMessenger;
   delete fEmPhysicsList;
   delete fRadDecay;
-  delete fDecayPhysics;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -110,10 +107,6 @@ void PhysicsList::ConstructProcess()
   // Radioactive decay
 
   fRadDecay->ConstructProcess();
-
-  // Decay
-
-  fDecayPhysics->ConstructProcess();
 
   // Tracking cut
 

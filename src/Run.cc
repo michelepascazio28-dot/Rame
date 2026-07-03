@@ -159,7 +159,7 @@ void Run::EndOfRun()
   rmsSValueCyto *= 1000.; // Convert from Gy/Bq.s to mGy/Bq.s
 
   G4cout.precision(6);
-  G4cout << "\n S value for cytoplasm (C<-C) = " << sValueCyto / gray << " mGy/Bq.s "
+  G4cout << "\n S value for cytoplasm (C<-N) = " << sValueCyto / gray << " mGy/Bq.s "
          << " +- " << rmsSValueCyto / gray << " mGy/Bq.s " << G4endl;
 
   // Compute S-value for nucleus (N<-C)
@@ -182,7 +182,7 @@ void Run::EndOfRun()
   rmsSValueNucl *= 1000.; // Convert from Gy/Bq.s to mGy/Bq
 
   G4cout.precision(6);
-  G4cout << "\n S value for nucleus (N<-C) = " << sValueNucl / gray << " mGy/Bq.s "
+  G4cout << "\n S value for nucleus (N<-N) = " << sValueNucl / gray << " mGy/Bq.s "
          << " +- " << rmsSValueNucl / gray << " mGy/Bq.s " << G4endl;
 
   // Compute track length of primary track

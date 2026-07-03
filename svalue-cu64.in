@@ -48,7 +48,7 @@
 #
 # Verbosity
 /tracking/verbose 0
-/run/printProgress 100
+/run/printProgress 5000
 #
 # Beam on
-/run/beamOn 500
+/run/beamOn 1000000

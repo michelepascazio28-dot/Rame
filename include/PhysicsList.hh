@@ -61,7 +61,6 @@ class PhysicsList : public G4VModularPhysicsList
     G4VPhysicsConstructor* fEmPhysicsList;
     G4VPhysicsConstructor* fRadDecay;
     PhysicsListMessenger* fMessenger;
-    G4VPhysicsConstructor* fDecayPhysics;
 };
 
 #endif
