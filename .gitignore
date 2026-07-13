@@ -1,0 +1,3 @@
+# Ignora solo le cartelle temporanee
+build/
+.ipynb_checkpoints/

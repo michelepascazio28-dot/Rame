@@ -1,0 +1,52 @@
+\section Examplemicroyz_s1 Geometry
+
+A box of liquid water.
+
+\section Examplemicroyz_s2 Incident particles
+
+Particles can be selected from the microyz.in macro
+as well as their incident energy.
+They are shot from the center of the box.
+
+\section Examplemicroyz_s3 Physics
+
+The default Geant4-DNA physics constructor 2 is used in
+the PhysicsList class. Alternative constructor can be
+selected from the macro file microyz.in.
+
+Livermore and Penelope physics lists can be used as well.
+
+Tracking cut and maximum step size can be selected in microyz.in
+
+\section Examplemicroyz_s4 Scoring of enery deposition
+
+Energy depositions are scored in spheres randomly
+placed along the incident particle track,
+using a weighted sampling.
+
+The user can select the radius of the SD sphere in microyz.in using the command:
+\verbatim
+/microyz/det/Radius X unit
+\endverbatim
+where X is the radius value and unit is specified.
+
+\section Examplemicroyz_s5 Run
+
+The code can be run using:
+\verbatim
+./microyz microyz.in
+\endverbatim
+
+\section Examplemicroyz_s6 Results
+
+Results can be analyzed after the run using:
+\verbatim
+root plot.C
+\endverbatim
+
+The distribution of y is shown by default.
+
+The following quantities are calculated: yF and yD.
+
+
+*/

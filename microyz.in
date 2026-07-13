@@ -1,0 +1,45 @@
+# MT mode
+/run/numberOfThreads 8
+#
+# Atomic deexcitation activation
+/process/em/deexcitationIgnoreCut true
+/process/em/fluo true
+/process/em/pixe true
+/process/em/auger true
+/process/em/augerCascade true
+#
+# Physics
+/microyz/phys/addPhysics dna_opt4
+/microyz/phys/addPhysics RadioactiveDecayPhysics
+#
+# Tracking cut
+#/microyz/det/setTrackingCut 7.4 eV
+#
+# Sphere radius, nucleus and cytoplasm
+/microyz/det/Radius 210 nm
+/microyz/det/setNuclRadius 1.5 um
+/microyz/det/setCytoThickness 7 um
+/microyz/det/setHalfWorldSize 0.5 mm
+#
+/run/initialize
+#
+#
+/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
+/process/had/rdm/verbose 1
+#
+# Activation of atomic deexcitation
+/process/em/fluo true
+/process/em/auger true
+/process/em/augerCascade true
+/process/em/pixe true
+/process/em/deexcitationIgnoreCut true
+#
+# Cu 64
+/gun/particle ion
+/gun/ion 29 64 0
+/gun/energy 0 eV
+#
+# Display run progress
+/run/printProgress 500
+#
+/run/beamOn 10000
