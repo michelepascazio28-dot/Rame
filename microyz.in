@@ -16,9 +16,9 @@
 #/microyz/det/setTrackingCut 7.4 eV
 #
 # Sphere radius, nucleus and cytoplasm
-/microyz/det/Radius 210 nm
-/microyz/det/setNuclRadius 1.5 um
-/microyz/det/setCytoThickness 7 um
+/microyz/det/Radius 420 nm
+/microyz/det/setNuclRadius 4 um
+/microyz/det/setCytoThickness 1 um
 /microyz/det/setHalfWorldSize 0.5 mm
 #
 /run/initialize
