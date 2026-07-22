@@ -1,0 +1,37 @@
+# macro for 64Cu simulation in a cell
+#
+/control/cout/ignoreThreadsExcept 0
+/control/verbose 2
+/run/verbose 1
+#
+# Set a very high time threshold to allow all decays to happen
+/process/had/rdm/thresholdForVeryLongDecayTime 3.1536e+67 s
+#
+/gun/particle ion
+/gun/ion 29 64 0 0
+#
+/process/em/fluo true
+/process/em/auger true
+/process/em/pixe true
+#
+/run/setCut 1 um
+#
+/analysis/setFileName Cu64_simulation
+#
+/analysis/h1/set 1  150  0. 1500 keV    # Spettro energetico e+ e-
+/analysis/h1/set 2  150  0. 1500 keV    # Spettro energetico neutrini
+/analysis/h1/set 3  150  0. 1500 keV    # Spettro energetico gamma
+/analysis/h1/set 6  100  0. 2500 keV    # Energia cinetica totale (Q)
+/analysis/h1/set 7  150  0. 15e3 keV    # Bilancio del momento
+/analysis/h1/set 8  100  0. 100. day    # Tempo di vita totale della catena (adatto al Cu64)
+/analysis/h1/set 9  100  0. 3. MeV      # Energia visibile totale
+/analysis/h1/set 10  100  0. 50. um
+/analysis/h1/set 11  100  0. 50. um
+/analysis/h1/set 12  100  -50. 50. um
+# Attivazione della tupla 0??? (poi vedo se è necessaria veramente)
+/analysis/ntuple/setActivation 0 true
+# ==========================================
+#
+/run/initialize
+/run/printProgress 10000
+/run/beamOn 1000000

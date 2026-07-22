@@ -1,74 +1,158 @@
-\page Examplemicroyz Example microyz
+\page Examplerdecay01 Example rdecay01 
+			    
+ Survey G4RadioactiveDecay process. See Physics Reference Manual, chapter 36.
+ See also http://ie.lbl.gov/decay.html
+ 	
+## Geometry construction
 
-Author: S. Incerti et al.
-Date: 17 Apr. 2015
-Email: incerti@cenbg.in2p3.fr
+ It is a simple box which represente an 'infinite' homogeneous medium.
+  
+## Physics list
 
-(c) The Geant4-DNA collaboration.
-
-This examples shows how to compute microdosimetry 
-distributions y, z in liquid water using exclusively Geant4-DNA
-physics processes and models.
-
-This example is provided by the Geant4-DNA collaboration.
-
-These processes and models are further described at:
-http://geant4-dna.org
-
-Any report or published results obtained using the Geant4-DNA software shall 
-cite the following Geant4-DNA collaboration publications: \n
-Phys. Med. 31 (2015) 861-874   \n
-Med. Phys. 37 (2010) 4692-4708 \n
-J. Appl. Phys. 122 (2017) 024303
-
-## Geometry
-
-A box of liquid water.
-
-## Incident particles
-
-Particles can be selected from the microyz.in macro
-as well as their incident energy.
-They are shot from the center of the box.
-
+ PhysicsList defines only G4RadioactiveDecay, G4Transportation processes,
+ and relevant particle definitions.
+ Therefore, once created, particles or ions travel as geantino.
+         	
+## Primary generator
+ 
+ Default kinematic is an ion (Ne24), at rest, at coordinate origin.
+ Can be changed with particleGun commands.
+         	
 ## Physics
 
-The default Geant4-DNA physics constructor 2 is used in
-the PhysicsList class. Alternative constructor can be
-selected from the macro file microyz.in
-
-Livermore and Penelope physics lists can be used as well.
-
-Tracking cut and maximum step size can be selected in microyz.in
-
-## Scoring of enery deposition
-
-Energy depositions are scored in spheres randomly
-placed along the incident particle track, 
-using a weighted sampling.
-
-The user can select the radius of the sphere in microyz.in using the command:
+ As said above, all particles and ions behave as geantino, eg. no energy loss.
+     
+ A flag:
 ```
-/microyz/det/Radius X unit
+/rdecay01/fullChain (true or false)
 ```
-where X is the radius value and unit is specified.
-
-## Run
-
-The code can be run using:
+allows to limit to single decay or full decay chain (default). 
+ In case of full decay chain, G4TrackStatus of ions is set to fStopButAlive
+ in order to force decay at rest.  
+ In case of single decay, G4TrackStatus of secondary ion is set to fStopAndKill.
+    
+ At each decay, one counts and plots energy spectrum of created particles and
+ ions, and energy-momentum balance of that decay.
+ 
+ Total time of life of decay chain is plotted. Activity is computed.
+ 
+ The command 
 ```
-./microyz microyz.in
+ /rdecay01/timeWindow
 ```
+ allows to survey activity of each nuclide in a specified
+ time window [t1,t2] : population at t1 and t2, nb of decays within [t1,t2], mean activity.
+ See timeWindow.mac
+ 
+ Few macros are given in example. Debug.mac is to be run in interactive mode. 
+ 
+## User data files
 
-## Results
-
-Results can be analyzed after the run using:
+ Users can redefine RadioactiveDecay and PhotonEvaporation data, via commands:
 ```
-root plot.C
+/grdm/setRadioactiveDecayFile
+/grdm/setPhotoEvaporationFile 
 ```
+ Examples of such files are given in subdirectory UserData. \n
+ Formats are described in readme \n
+ Examples in macros Cf238.mac and No252.mac 
 
-The distribution of y is shown by default.
+## example of biasing
 
-The following quantities are calculated: yF and yD.
+ macro timeWindowBiased.mac illustrates one of the biasing capabilities of the 
+ radioactiveDecay package. Ca47 is forced to decay within 20 days
+ (eg. 1728000 seconds in data file).
+ It is instructive to plot time of life (histo 8) with and without the weight of the track:
+ see line 189/190 of TrackingAction.cc
+ And also to compare with analog decay mode : comment out /grdm/ commands in the macro.   	
+## Visualisation
+ 
+ Visualization Manager is set in main().
+ Initialisation of the drawing is done via the commands
+ /vis/.. in the macro vis.mac. This macro is automatically read from the main 
+ in case of interactive running mode.
+ 
+ - e- red
+ - e+ blue
+ - nu_e white
+ - anti_nu_e white
+ - gamma green
+ - alpha yellow
+ - GenericIon grey
+ 
+## How to start ?
+ 
+  - Execute rdecay01 in 'batch' mode from macro files
+```
+% ./rdecay01  singleDecay.mac
+% ./rdecay01  rdecay01.in > rdecay01.out	
+```
+ 		
+  - Execute rdecay01 in 'interactive mode' with visualization
+```
+% ./rdecay01
+....
+Idle>   ---> type your commands. For instance:
+Idle> /control/execute debug.mac 
+....
+Idle> /run/beamOn 1
+....				
+Idle> exit
+```
+	
+ Macros provided in this example:
+  - Co60.mac:  Co60
+  - Gd158.mac: Gd158 excited state
+  - No158.mac: read user data file
+  - Po212.mac: Po212 excited state
+  - Ra228.mac: Ra228 excited state
+  - alpha.mac: Po212 alpha decay
+  - atomicDeexcitation.mac: plot Auger cascade
+  - fullChain.mac: U238
+  - neutron.mac: Li10 neutron emission
+  - proton.mac:  Co53 proton  emission
+  - singleDecay.mac: Ne10
+  - timeWindow.mac: print activity within a given time window
+  - timeWindowBiased.mac: force decay within a given time window  
+    
+ Macros to be run interactively:
+  - Cf238.mac: read user data file
+  - debug.mac: Pb210
+  - electronicCapture.mac: Fe55 electronic capture
+  - vis.mac: To activate visualization
+  	
+## Histograms
+ 
+  rdecay01 produces several 1D histograms which are saved as
+  rdecay01.root by default.
 
-
+    - 1 : energy spectrum: e+ e-
+    - 2 : energy spectrum: nu_e anti_nu_ev
+    - 3 : energy spectrum: gamma
+    - 4 : energy spectrum: alpha
+    - 5 : energy spectrum: ions
+    - 6 : total kinetic energy (Q)
+    - 7 : momentum balance
+    - 8 : total time of life of decay chain
+    - 9 : total visible energy
+                            
+   The histograms are managed by G4AnalysiManager and its Messenger. 
+   The histos can be individually activated with the command :
+```
+/analysis/h1/set id nbBins  valMin valMax unit 
+```
+   where unit is the desired unit for the histo (MeV or keV, deg or mrad, etc..)
+   
+   One can control the name of the histograms file with the command:
+```
+/analysis/setFileName  name  (default rdecay1)
+```
+   
+   It is possible to choose the format of the histogram file : root (default),
+   xml, csv, by using namespace in HistoManager.hh
+   
+   It is also possible to print selected histograms on an ascii file:
+```
+/analysis/h1/setAscii id
+```
+   All selected histos will be written on a file name.ascii (default rdecay1)

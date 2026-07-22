@@ -1,31 +1,59 @@
-#ifndef RunAction_hh
-#define RunAction_hh 1
+//
+// ********************************************************************
+// * License and Disclaimer                                           *
+// *                                                                  *
+// * The  Geant4 software  is  copyright of the Copyright Holders  of *
+// * the Geant4 Collaboration.  It is provided  under  the terms  and *
+// * conditions of the Geant4 Software License,  included in the file *
+// * LICENSE and available at  http://cern.ch/geant4/license .  These *
+// * include a list of copyright holders.                             *
+// *                                                                  *
+// * Neither the authors of this software system, nor their employing *
+// * institutes,nor the agencies providing financial support for this *
+// * work  make  any representation or  warranty, express or implied, *
+// * regarding  this  software system or assume any liability for its *
+// * use.  Please see the license in the file  LICENSE  and URL above *
+// * for the full disclaimer and the limitation of liability.         *
+// *                                                                  *
+// * This  code  implementation is the result of  the  scientific and *
+// * technical work of the GEANT4 collaboration.                      *
+// * By using,  copying,  modifying or  distributing the software (or *
+// * any work based  on the software)  you  agree  to acknowledge its *
+// * use  in  resulting  scientific  publications,  and indicate your *
+// * acceptance of all terms of the Geant4 Software license.          *
+// ********************************************************************
+//
+/// \file RunAction.hh
+/// \brief Definition of the RunAction class
+
+#ifndef RunAction_h
+#define RunAction_h 1
 
 #include "G4UserRunAction.hh"
 #include "globals.hh"
 
-class G4Run;
+class Run;
+class HistoManager;
+class PrimaryGeneratorAction;
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class RunAction : public G4UserRunAction
 {
-public:
-    RunAction();
-    virtual ~RunAction();
+  public:
+    RunAction(PrimaryGeneratorAction*);
+    ~RunAction() override;
 
-    G4int GetYId() const { return fH1_yNuc; }
-    G4int GetZId() const { return fH1_zNuc; }
+    G4Run* GenerateRun() override;
+    void BeginOfRunAction(const G4Run*) override;
+    void EndOfRunAction(const G4Run*) override;
 
-    G4int GetYCytoId() const { return fH1_yCyto; }
-    G4int GetZCytoId() const { return fH1_zCyto; }
-
-    virtual void BeginOfRunAction(const G4Run*) override;
-    virtual void EndOfRunAction(const G4Run*) override;
-    
-private:
-    G4int fH1_yNuc; // ID dell'istogramma per y (Nucleo)
-    G4int fH1_zNuc; // ID dell'istogramma per z (Nucleo)
-    G4int fH1_yCyto; // ID dell'istogramma per y (Citoplasma)
-    G4int fH1_zCyto; // ID dell'istogramma per z (Citoplasma)
+  private:
+    PrimaryGeneratorAction* fPrimary = nullptr;
+    Run* fRun = nullptr;
+    HistoManager* fHistoManager = nullptr;
 };
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif

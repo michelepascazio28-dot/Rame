@@ -1,25 +1,13 @@
 #include "SteppingAction.hh"
-#include "EventAction.hh"
-#include "G4Step.hh"
-#include "G4LogicalVolume.hh"
-#include "G4RunManager.hh"
-#include "DetectorConstruction.hh"
-#include "G4SystemOfUnits.hh"
+#include "G4SteppingManager.hh"
 #include "G4Track.hh"
-#include "G4UnitsTable.hh"
+#include "G4Step.hh"
+#include "G4StepPoint.hh"
+#include "G4Positron.hh"
+#include "G4AnalysisManager.hh"
+#include "G4SystemOfUnits.hh"
 
-SteppingAction::SteppingAction(EventAction* eventAction) 
- : G4UserSteppingAction(), fEventAction(eventAction) 
-{
-    auto runManager = G4RunManager::GetRunManager();
-    auto det = static_cast<const DetectorConstruction*>(runManager->GetUserDetectorConstruction());
-    
-    fLogicNucleus = det->GetLogicNucleus();
-    fLogicCell    = det->GetLogicCell();
-
-    if (!fLogicNucleus) G4cout << "ATTENZIONE: fLogicNucleus non trovato!" << G4endl;
-    if (!fLogicCell)    G4cout << "ATTENZIONE: fLogicCell non trovato!" << G4endl;
-}
+SteppingAction::SteppingAction() {}
 
 SteppingAction::~SteppingAction() {}
 
@@ -27,37 +15,29 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 {
     G4Track* track = step->GetTrack();
     
-    // 1. Filtro particella: Solo elettroni (e-)
-    if (track->GetDefinition()->GetParticleName() != "e-") return;
-
-    // 2. Filtro energetico fondamentale per isolare gli Auger (< 10 keV)
-    G4double eKin = track->GetKineticEnergy();
-    if (eKin >= 10.0 * keV) return; 
-
-    G4double edep = step->GetTotalEnergyDeposit();
-    G4double stepLen = step->GetStepLength();
-    G4LogicalVolume* vol = step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
-
-    // 3. Sempre contare la lunghezza totale
-    fEventAction->AddAugerTotalLength(stepLen);
-
-    // 4. Logica Additiva per Nucleo e Citoplasma basata sui volumi logici
-    if (vol == fLogicNucleus) {
-        // --- Energia ---
-        fEventAction->AddNucleusEdep(edep);
-        fEventAction->AddCytoplasmEdep(edep); // Additivo (il nucleo è dentro la cellula)
+    // Controlliamo se è un positrone e se la traccia sta per essere killata
+    if (track->GetDefinition() == G4Positron::Positron()) {
         
-        // --- Lunghezza ---
-        fEventAction->AddAugerTotalLength(stepLen);
-        fEventAction->AddAugerCytoLength(stepLen); // Additivo
-    } 
-    else if (vol == fLogicCell) {
-        // --- Energia ---
-        fEventAction->AddCytoplasmEdep(edep);
-        
-        // --- Lunghezza ---
-        fEventAction->AddAugerCytoLength(stepLen);
+        // qquando il positrone viene annichilito/spento, la traccia riceve lo stato fStopAndKill
+        if (track->GetTrackStatus() == fStopAndKill) {
+
+            G4ThreeVector creationVertex = track->GetVertexPosition();
+            G4double r_creation = creationVertex.mag(); 
+
+            G4ThreeVector annihilationVertex = track->GetPosition();
+            G4double r_annihilation = annihilationVertex.mag();
+
+            G4double r_diff = r_annihilation - r_creation;
+
+            G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+            analysisManager->FillNtupleDColumn(0, 0, r_creation);
+            analysisManager->FillNtupleDColumn(0, 1, r_annihilation);
+            analysisManager->FillNtupleDColumn(0, 2, r_diff);
+            analysisManager->AddNtupleRow(0);
+
+            analysisManager->FillH1(10, r_creation);
+            analysisManager->FillH1(11, r_annihilation);
+            analysisManager->FillH1(12, r_diff);
+        }
     }
 }
-
-

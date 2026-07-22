@@ -1,10 +1,22 @@
+# Cartella di compilazione
 build/
 bin/
+lib/
+
+# File di output di Geant4
 *.root
 *.csv
-*.o
-*.d
-.vscode/
 *.log
-__pycache__/
-.ipynb_checkpoints/
+
+# File temporanei di sistema e IDE
+.vscode/
+.DS_Store
+*~
+*.swp
+
+# File di debug o cache
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+install_manifest.txt

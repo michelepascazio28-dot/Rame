@@ -1,21 +1,19 @@
-#ifndef ActionInitialization_hh
-#define ActionInitialization_hh 1
+#ifndef ActionInitialization_h
+#define ActionInitialization_h 1
 
 #include "G4VUserActionInitialization.hh"
 
-class DetectorConstruction; // Forward declaration
+/// Action initialization class.
+///
 
 class ActionInitialization : public G4VUserActionInitialization
 {
   public:
-    ActionInitialization(DetectorConstruction* det);
-    virtual ~ActionInitialization();
+    ActionInitialization() = default;
+    ~ActionInitialization() override = default;
 
-    virtual void Build() const override;
-    virtual void BuildForMaster() const override;
-
-  private:
-    DetectorConstruction* fDet;
+    void BuildForMaster() const override;
+    void Build() const override;
 };
 
 #endif

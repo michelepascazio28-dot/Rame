@@ -1,73 +1,44 @@
 #include "EventAction.hh"
+
+#include "HistoManager.hh"
+#include "Run.hh"
+
 #include "G4Event.hh"
-#include "G4AnalysisManager.hh"
-#include "G4SystemOfUnits.hh"
-#include "DetectorConstruction.hh"
+#include "G4RunManager.hh"
 
-EventAction::EventAction(const DetectorConstruction* det)
- : G4UserEventAction(), 
-   fNucleusEdep(0.),
-   fCytoplasmEdep(0.),
-   fAugerLengthTotal(0.),
-   fAugerLengthCyto(0.),
-   fProcessID(0),
-   fDet(det)
-{}
+#include <iomanip>
 
-EventAction::~EventAction() {}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+EventAction::EventAction()
+{
+  // Set default print level
+  G4RunManager::GetRunManager()->SetPrintProgress(10000);
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EventAction::BeginOfEventAction(const G4Event*)
 {
-    fNucleusEdep = 0.;
-    fCytoplasmEdep = 0.;
-    fAugerLengthTotal = 0.;
-    fAugerLengthCyto = 0.;
-    fProcessID = 0;
+  fDecayChain = G4String(" ");
+  fEvisTot = 0.;
 }
 
-void EventAction::EndOfEventAction(const G4Event*)
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void EventAction::EndOfEventAction(const G4Event* evt)
 {
-    // Calcoli
-    G4double nucChord = fDet->GetNucleusChord(); // è stato definito in DetectorConstruction.hh e poi in DetectorConstruction.cc, consiste nella lunghezza media del percorso nel nucleo, usata per calcolare y del nucleo
-    G4double nucMass  = fDet->GetNucleusMass(); // idem per la massa del nucleo, usata per calcolare z del nucleo
-    G4double cytoMass = fDet->GetCytoplasmMass(); // massa del citoplasma, usata per calcolare z del citoplasma
-    
-    // Se non c'è deposito, y=0 e z=0
-    // Sintassi : variabile = (condizione) ? valore_se_vero : valore_se_falso;
-    G4double yNuc = (fNucleusEdep > 0.) ? (fNucleusEdep / keV) / (nucChord / um) : 0.;
-    G4double zNuc = (fNucleusEdep > 0.) ? (fNucleusEdep / joule) / (nucMass / kg) * 1000.0 : 0.;
-    
-    // G4double effectiveChord = (fAugerLengthCyto > 0.) ? fAugerLengthCyto : fDet->GetCytoplasmChord();
-    // G4double yCyto = (fCytoplasmEdep > 0.) ? (fCytoplasmEdep / keV) / (effectiveChord / um) : 0.;
-    // G4double zCyto = (fCytoplasmEdep > 0.) ? (fCytoplasmEdep / joule) / (cytoMass / kg) * 1000.0 : 0.;
+  G4int evtNb = evt->GetEventID();
+  G4int printProgress = G4RunManager::GetRunManager()->GetPrintProgress();
+  // printing survey
+  //
+  if (evtNb % printProgress == 0)
+    G4cout << "    End of event. Decay chain:" << fDecayChain << G4endl << G4endl;
 
-    G4double effectiveLength = (fAugerLengthCyto > 0.) ? fAugerLengthCyto : fDet->GetCytoplasmChord();
-
-    // y = E / l
-    G4double yCyto = (fCytoplasmEdep > 0.) ? (fCytoplasmEdep / keV) / (effectiveLength / um) : 0.;
-
-    // Calcolo Specific Energy (z)
-    G4double zCyto = (fCytoplasmEdep > 0.) ? (fCytoplasmEdep / joule) / (fDet->GetCytoplasmMass() / kg) * 1000.0 : 0.;
-
-
-    G4double totalEdep = fNucleusEdep + fCytoplasmEdep;
-    // Supponendo che il Rame-64 rilasci circa 8.3 keV (energia Auger tipica)
-    // if (totalEdep > 10.0 * keV) { 
-    //    G4cout << "ATTENZIONE: Evento anomalo! Edep Totale: " << totalEdep/keV << " keV" << G4endl;
-    // }
-
-    // G4cout << "Debug EndOfEvent: EdepCyto=" << fCytoplasmEdep/keV << " keV, " << "TrackLength=" << fTrackLengthCyto/um << " um" << G4endl;
-
-    // Riempimento Ntuple (Assicurati che l'ordine sia lo stesso creato in RunAction!)
-    auto man = G4AnalysisManager::Instance();
-    man->FillNtupleDColumn(0, fNucleusEdep/keV);
-    man->FillNtupleDColumn(1, yNuc);
-    man->FillNtupleDColumn(2, zNuc);
-    man->FillNtupleDColumn(3, fCytoplasmEdep/keV);
-    man->FillNtupleDColumn(4, yCyto);
-    man->FillNtupleDColumn(5, zCyto);
-    man->FillNtupleDColumn(6, fAugerLengthTotal/um);
-    man->FillNtupleDColumn(7, fAugerLengthCyto/um);
-    man->FillNtupleDColumn(8, fProcessID);
-    man->AddNtupleRow();
+  // total visible energy
+  G4AnalysisManager::Instance()->FillH1(9, fEvisTot);
+  Run* run = static_cast<Run*>(G4RunManager::GetRunManager()->GetNonConstCurrentRun());
+  run->EvisEvent(fEvisTot);
 }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

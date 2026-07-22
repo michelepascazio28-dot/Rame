@@ -8,14 +8,12 @@ class EventAction; // Forward declaration
 
 class SteppingAction : public G4UserSteppingAction {
 public:
-    SteppingAction(EventAction* eventAction);
+    SteppingAction();
     virtual ~SteppingAction();
     virtual void UserSteppingAction(const G4Step*);
 
 private:
-    EventAction* fEventAction; // Il puntatore salvato
-    G4LogicalVolume* fLogicNucleus = nullptr;
-    G4LogicalVolume* fLogicCell = nullptr;
+    EventAction* fEventAction;
 };
 
 #endif

@@ -1,40 +1,37 @@
 #include "ActionInitialization.hh"
-#include "PrimaryGeneratorAction.hh"
+
 #include "EventAction.hh"
+#include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "SteppingAction.hh"
-#include "DetectorConstruction.hh"
-#include "MicrodosimetrySD.hh"
 #include "TrackingAction.hh"
 
-ActionInitialization::ActionInitialization(DetectorConstruction* det)
- : G4VUserActionInitialization(), fDet(det)
-{}
-
-ActionInitialization::~ActionInitialization()
-{}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void ActionInitialization::BuildForMaster() const
 {
-    SetUserAction(new RunAction());
+  RunAction* runAction = new RunAction(nullptr);
+  SetUserAction(runAction);
 }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void ActionInitialization::Build() const
 {
-    SetUserAction(new PrimaryGeneratorAction());
+  PrimaryGeneratorAction* primary = new PrimaryGeneratorAction();
+  SetUserAction(primary);
 
-    RunAction* runAction = new RunAction();
-    SetUserAction(runAction);
+  RunAction* runAction = new RunAction(primary);
+  SetUserAction(runAction);
 
-    EventAction* eventAction = new EventAction(fDet); 
-    SetUserAction(eventAction);
+  EventAction* eventAction = new EventAction();
+  SetUserAction(eventAction);
 
-    MicrodosimetrySD* sd = fDet->GetMicroSD(); // GetMicroSD() è un getter in DetectorConstruction.hh per ottenere il puntatore alla nostra MicrodosimetrySD
-    if (sd) {
-        sd->SetEventAction(eventAction);
-    }
+  TrackingAction* trackingAction = new TrackingAction(eventAction);
+  SetUserAction(trackingAction);
 
-    SetUserAction(new SteppingAction(eventAction));
-
-    SetUserAction(new TrackingAction(eventAction));
+  SteppingAction* steppingAction = new SteppingAction();
+  SetUserAction(steppingAction);
 }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

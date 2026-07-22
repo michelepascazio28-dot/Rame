@@ -1,51 +1,92 @@
+/// \file PhysicsList.cc
+/// \brief Implementation of the PhysicsList class
+
 #include "PhysicsList.hh"
-#include "G4EmDNAPhysics_option4.hh" // Fisica specifica DNA
-#include "G4EmStandardPhysics_option4.hh" // Per processi elettromagnetici generali (inclusi quelli di rilassamento)
-#include "G4DecayPhysics.hh"
-#include "G4RadioactiveDecayPhysics.hh"
-#include "G4EmParameters.hh"          // Necessario per configurare Auger
+
+#include "G4DeexPrecoParameters.hh"
+#include "G4EmBuilder.hh"
+#include "G4IonConstructor.hh"
+#include "G4LossTableManager.hh"
+#include "G4NuclearLevelData.hh"
+#include "G4NuclideTable.hh"
+#include "G4ParticleTypes.hh"
+#include "G4PhysListUtil.hh"
+#include "G4PhysicsListHelper.hh"
+#include "G4Radioactivation.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4UAtomicDeexcitation.hh"
+#include "G4UnitsTable.hh"
+#include "globals.hh"
 
-PhysicsList::PhysicsList() : G4VModularPhysicsList()
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+PhysicsList::PhysicsList()
 {
-    SetVerboseLevel(0);
+  // instantiate Physics List infrastructure
+  //
+  G4PhysListUtil::InitialiseParameters();
 
-    // 1. CONFIGURAZIONE PARAMETRI PRIMA DELLA REGISTRAZIONE
-    // È vitale farlo prima di RegisterPhysics!
-    G4EmParameters* param = G4EmParameters::Instance();
-    param->SetAuger(true);                // Explicitly ON
-    param->SetAugerCascade(true);         // Cascata Auger ON
-    param->SetFluo(true);                 // Anche la fluorescenza aiuta il rilassamento
-    param->SetDeexcitationIgnoreCut(true); // Fondamentale: ignora i cut per l'emissione atomica
+  // update G4NuclideTable time limit
+  //
+  const G4double meanLife = 1 * nanosecond;
+  G4NuclideTable::GetInstance()->SetMeanLifeThreshold(meanLife);
+  G4NuclideTable::GetInstance()->SetLevelTolerance(1.0 * eV);
 
-    // 2. Registrazione Fisica
-    // Nota: G4EmDNAPhysics_option4 è ottima, ma assicurati che la tua geometria 
-    // sia definita come "G4_WATER" o materiale compatibile.
-    RegisterPhysics(new G4EmDNAPhysics_option4());
-    RegisterPhysics(new G4EmStandardPhysics_option4()); // Per processi elettromagnetici generali (inclusi quelli di rilassamento)
+  // define flags for the atomic de-excitation module
+  //
+  G4EmParameters::Instance()->SetDefaults();
+  G4EmParameters::Instance()->SetAugerCascade(true);
+  G4EmParameters::Instance()->SetDeexcitationIgnoreCut(true);
 
-    // 3. Fisica del decadimento
-    RegisterPhysics(new G4DecayPhysics());
-    RegisterPhysics(new G4RadioactiveDecayPhysics());
+  // define flags for nuclear gamma de-excitation model
+  //
+  G4DeexPrecoParameters* deex = G4NuclearLevelData::GetInstance()->GetParameters();
+  deex->SetCorrelatedGamma(false);
+  deex->SetStoreAllLevels(true);
+  deex->SetInternalConversionFlag(true);
+  deex->SetIsomerProduction(true);
+  deex->SetMaxLifeTime(meanLife);
+
+  // set default cut in range value
+  //
+  SetDefaultCutValue(1 * mm);
 }
 
-PhysicsList::~PhysicsList() = default;
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void PhysicsList::ConstructParticle()
 {
-    G4VModularPhysicsList::ConstructParticle();
+  // minimal set of particles for EM physics and radioactive decay
+  //
+  G4EmBuilder::ConstructMinimalEmSet();
 }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void PhysicsList::ConstructProcess()
 {
-    G4VModularPhysicsList::ConstructProcess();
+  AddTransportation();
+
+  G4Radioactivation* radioactiveDecay = new G4Radioactivation();
+
+  G4bool ARMflag = true;
+  radioactiveDecay->SetARM(ARMflag);  // Atomic Rearangement
+
+  // EM physics constructor is not used in this example, so
+  // it is needed to instantiate and to initialize atomic deexcitation
+  //
+  G4LossTableManager* man = G4LossTableManager::Instance();
+  G4VAtomDeexcitation* deex = man->AtomDeexcitation();
+  if (nullptr == deex) {
+    deex = new G4UAtomicDeexcitation();
+    man->SetAtomDeexcitation(deex);
+  }
+  deex->InitialiseAtomicDeexcitation();
+
+  // register radioactiveDecay
+  //
+  G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
+  ph->RegisterProcess(radioactiveDecay, G4GenericIon::GenericIon());
 }
 
-void PhysicsList::SetCuts()
-{
-    G4double cutValue = 10* um; 
-    SetCutsWithDefault();
-    SetCutValue(cutValue, "e-");
-    SetCutValue(cutValue, "e+");
-    SetCutValue(cutValue, "gamma");
-}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
