@@ -2,6 +2,8 @@
 
 #include "DetectorMessenger.hh"
 #include "TrackerSD.hh"
+#include "CalorimeterSD_Nucl.hh"
+#include "CalorimeterSD_Cyto.hh"
 
 #include "G4GeometryManager.hh"
 #include "G4GeometryTolerance.hh"
@@ -85,15 +87,34 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
 
 void DetectorConstruction::ConstructSDandField()
 {
+  // Primo SD
   G4String trackerChamberSDname = "TrackerChamberSD";
 
   auto* aTrackerSD = new TrackerSD(trackerChamberSDname, "TrackerHitsCollection");
-  // Qui stiamo settando il raggio di SD.
+  // qui stiamo settando il raggio di SD
   aTrackerSD->SetRadius(fRadius);
 
   G4SDManager::GetSDMpointer()->AddNewDetector(aTrackerSD);
 
   SetSensitiveDetector("Nucl_LV", aTrackerSD, true);
+
+  // Secondo SD
+  G4String CalorimeterSDname = "CalorimeterSD_Nucl";
+
+  auto* aCalorimeterSD = new CalorimeterSD_Nucl(CalorimeterSDname, 7);
+
+  G4SDManager::GetSDMpointer()->AddNewDetector(aCalorimeterSD);
+
+  SetSensitiveDetector("Nucl_LV", aCalorimeterSD, true);
+
+  // Secondo SD
+  G4String CalorimeterSDname_1 = "CalorimeterSD_Cyto";
+
+  auto* aCalorimeterSD_1 = new CalorimeterSD_Cyto(CalorimeterSDname_1, 8);
+
+  G4SDManager::GetSDMpointer()->AddNewDetector(aCalorimeterSD_1);
+
+  SetSensitiveDetector("Cyto_LV", aCalorimeterSD_1, true);
 }
 
 void DetectorConstruction::SetTrackingCut(const G4double& value)
@@ -124,6 +145,12 @@ void DetectorConstruction::SetCytoThickness(const G4double& value)
 void DetectorConstruction::SetHalfWorldSize(const G4double& value)
 {
     fHalfWorldSize = value;
+}
+
+void DetectorConstruction::SetWorldMaterial(const G4String& materialName)
+{
+    G4NistManager* nist = G4NistManager::Instance();
+    fpWaterMaterial = nist->FindOrBuildMaterial(materialName);
 }
 
 void DetectorConstruction::PrintParameters() const

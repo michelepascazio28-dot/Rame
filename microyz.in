@@ -42,4 +42,4 @@
 # Display run progress
 /run/printProgress 500
 #
-/run/beamOn 10000
+/run/beamOn 1000

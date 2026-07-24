@@ -186,7 +186,7 @@ void TrackerSD::EndOfEvent(G4HCofThisEvent*)
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 
   // Fill ntuple including weighting
-  analysisManager->FillNtupleDColumn(0, radius / nm);
+  analysisManager->FillNtupleDColumn(1, radius / nm);
   analysisManager->FillNtupleDColumn(2, nofHits);
   analysisManager->FillNtupleDColumn(3, nbEdep);
   analysisManager->FillNtupleDColumn(4, (epsilon / eV) / (chord / nm));

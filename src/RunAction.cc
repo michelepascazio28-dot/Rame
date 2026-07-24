@@ -28,6 +28,8 @@ RunAction::RunAction() : G4UserRunAction()
   analysisManager->CreateNtupleDColumn("y");
   analysisManager->CreateNtupleDColumn("z");
   analysisManager->CreateNtupleDColumn("Einc");
+  analysisManager->CreateNtupleDColumn("Nuclear_dose");
+  analysisManager->CreateNtupleDColumn("Cytoplasmic_dose");
 
   analysisManager->FinishNtuple();
 }

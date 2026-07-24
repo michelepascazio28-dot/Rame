@@ -27,7 +27,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void SetCytoThickness(const G4double&);
     void SetHalfWorldSize(const G4double&);
     void SetWorldMaterial(const G4String&);
+    void SetNuclMaterial(const G4String&);
     void SetCytoMaterial(const G4String&);
+
     // Getters
     G4double GetNuclRadius() const { return fNuclRadius; }
     G4double GetCytoThickness() const { return fCytoThickness; }
