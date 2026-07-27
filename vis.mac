@@ -1,0 +1,42 @@
+# --- Inizializzazione del Run Manager (Fondamentale prima di qualsiasi comando /vis) ---
+/run/initialize
+
+# --- Apertura del sistema grafico e disegno del volume ---
+/vis/open OGL 600x600-0+0
+/vis/drawVolume
+
+# --- Configurazione della vista e delle tracce ---
+/vis/viewer/set/autoRefresh true
+/vis/scene/add/trajectories smooth
+/vis/modeling/trajectories/create/drawByCharge
+/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
+/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2
+
+# --- Filtro per escludere e+, gamma, neutrini ---
+/vis/filtering/trajectories/create/particleFilter
+/vis/filtering/trajectories/particleFilter-0/add e+
+/vis/filtering/trajectories/particleFilter-0/add gamma
+/vis/filtering/trajectories/particleFilter-0/add anti_nu_e
+/vis/filtering/trajectories/particleFilter-0/invert 1 # Serve per nasconderle
+
+# --- Gestione dell'accumulo degli eventi ---
+/vis/scene/endOfEventAction accumulate
+/vis/viewer/set/viewpointThetaPhi 45 45
+
+# --- Aggiornamento finale della vista ---
+/vis/viewer/flush
+
+/control/echo "=== Vis.mac inizializzato correttamente ==="
+
+#Successivamente, per avviare la simulazione:
+#/control/execute run.mac
+
+#/gun/particle ion
+
+#/gun/ion 29 64
+
+#/gun/energy 0 eV
+
+#/tracking/verbose 1
+
+#/run/beamOn 1
