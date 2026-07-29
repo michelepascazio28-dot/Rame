@@ -40,8 +40,8 @@ void CalorimeterSD_Nucl::EndOfEvent(G4HCofThisEvent*)
         G4double dose = fEdepSum / fMass;
         
 
-        G4cout << "--> SD [" << GetName() << "] Dose: " << dose / gray 
-               << " Gy (Edep: " << fEdepSum << ", Mass: " << fMass << ")" << G4endl;
+        // G4cout << "--> SD [" << GetName() << "] Dose: " << dose / gray 
+        //       << " Gy (Edep: " << fEdepSum << ", Mass: " << fMass << ")" << G4endl;
                
         // Salvo la dose
 
