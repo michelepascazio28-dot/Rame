@@ -12,6 +12,8 @@
 #include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
 
+#include <cstdlib>
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 Run::Run(const DetectorConstruction* detector)
@@ -149,18 +151,17 @@ void Run::EndOfRun()
   else
     rmsCyto = 0.;
 
+  G4double semCyto = rmsCyto / std::sqrt(static_cast<G4double>(numberOfEvent));
+
   G4cout.precision(6);
   G4cout << "\n Total Energy deposited in cytoplasm = " << G4BestUnit(fCellEdeposit, "Energy")
-         << " +- " << G4BestUnit(rmsCyto, "Energy") << G4endl;
+        << " +- " << G4BestUnit(semCyto, "Energy") << G4endl;   
 
   G4double sValueCyto = fCellEdeposit / fDetector->GetCytoMass();
-  G4double rmsSValueCyto = rmsCyto / fDetector->GetCytoMass();
-  sValueCyto *= 1000.; // Convert from Gy/Bq.s to mGy/Bq.s
-  rmsSValueCyto *= 1000.; // Convert from Gy/Bq.s to mGy/Bq.s
+  G4double rmsSValueCyto = semCyto / fDetector->GetCytoMass();
 
-  G4cout.precision(6);
-  G4cout << "\n S value for cytoplasm (C<-N) = " << sValueCyto / gray << " mGy/Bq.s "
-         << " +- " << rmsSValueCyto / gray << " mGy/Bq.s " << G4endl;
+  sValueCyto *= 1000.;
+  rmsSValueCyto *= 1000.;
 
   // Compute S-value for nucleus (N<-C)
 
@@ -172,12 +173,14 @@ void Run::EndOfRun()
   else
     rmsNucl = 0.;
 
+  G4double semNucl = rmsNucl / std::sqrt(static_cast<G4double>(numberOfEvent));
+
   G4cout.precision(6);
   G4cout << "\n Total Energy deposited in nucleus = " << G4BestUnit(fNuclEdeposit, "Energy")
-         << " +- " << G4BestUnit(rmsNucl, "Energy") << G4endl;
+         << " +- " << G4BestUnit(semNucl, "Energy") << G4endl;
 
   G4double sValueNucl = fNuclEdeposit / fDetector->GetNuclMass();
-  G4double rmsSValueNucl = rmsNucl / fDetector->GetNuclMass();
+  G4double rmsSValueNucl = semNucl / fDetector->GetNuclMass();
   sValueNucl *= 1000.; // Convert from Gy/Bq.s to mGy/Bq.s
   rmsSValueNucl *= 1000.; // Convert from Gy/Bq.s to mGy/Bq
 
@@ -251,9 +254,12 @@ void Run::EndOfRun()
   G4cout.precision(prec);
 
   // Output file
-
+  // serve per creare i nomi delle batches
+  const char* batchTag = std::getenv("BATCH_TAG");
+  G4String outFileName = batchTag ? (G4String("s_") + batchTag + ".txt") : G4String("s.txt");
   FILE* myFile;
-  myFile = fopen("s.txt", "a");
+  myFile = fopen(outFileName.c_str(), "a");
+
   fprintf(myFile, "%e %e %e %e %e %e %e \n", fDetector->GetNuclRadius() / nm,
           fDetector->GetCytoThickness() / nm, fEkin / eV, sValueCyto / gray, rmsSValueCyto / gray,
           sValueNucl / gray, rmsSValueNucl / gray);

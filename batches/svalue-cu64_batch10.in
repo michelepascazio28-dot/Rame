@@ -1,5 +1,7 @@
 # MT
 /run/numberOfThreads 8
+# Random seed for batches
+/random/setSeeds 1227617934 9615703
 #
 # Atomic deexcitation activation
 /process/em/deexcitationIgnoreCut true
@@ -37,7 +39,7 @@
 /gun/energy 0 eV
 #
 # Histograms
-/analysis/setFileName cu64
+/analysis/setFileName cu64_batch10
 /analysis/h1/set  0 200 0 10 keV #All Auger e- track energy
 /analysis/h1/set  1 75 0.5 1 keV #Low Energetic Auger e- track energy
 /analysis/h1/set  5 500 0 50 keV #All energy deposit in cytoplasm
@@ -51,4 +53,4 @@
 /run/printProgress 5000
 #
 # Beam on
-/run/beamOn 1000000
+/run/beamOn 100000
