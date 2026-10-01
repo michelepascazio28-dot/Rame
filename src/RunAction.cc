@@ -32,6 +32,10 @@ RunAction::RunAction() : G4UserRunAction()
   analysisManager->CreateNtupleDColumn("Cytoplasmic_dose");
 
   analysisManager->FinishNtuple();
+
+  analysisManager->CreateH1("r_creation", "Radial position of e+ emission", 400, 0., 2000., "um");
+  analysisManager->CreateH1("r_annihilation", "Radial position of e+ annihilation", 400, 0., 2000., "um");
+  analysisManager->CreateH1("displacement", "e+ emission-to-annihilation distance", 400, 0., 2000., "um");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

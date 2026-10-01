@@ -19,7 +19,7 @@
 /microyz/det/Radius 420 nm
 /microyz/det/setNuclRadius 4 um
 /microyz/det/setCytoThickness 1 um
-/microyz/det/setHalfWorldSize 0.5 mm
+/microyz/det/setHalfWorldSize 5 mm
 #
 /run/initialize
 #
