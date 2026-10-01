@@ -48,7 +48,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //
   // define a material
   //
-  G4Material* Air = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
+  G4Material* Air = G4NistManager::Instance()->FindOrBuildMaterial("G4_GALACTIC");
 
   //
   // World

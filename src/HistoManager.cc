@@ -1,34 +1,6 @@
-//
-// ********************************************************************
-// * License and Disclaimer                                           *
-// *                                                                  *
-// * The  Geant4 software  is  copyright of the Copyright Holders  of *
-// * the Geant4 Collaboration.  It is provided  under  the terms  and *
-// * conditions of the Geant4 Software License,  included in the file *
-// * LICENSE and available at  http://cern.ch/geant4/license .  These *
-// * include a list of copyright holders.                             *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.  Please see the license in the file  LICENSE  and URL above *
-// * for the full disclaimer and the limitation of liability.         *
-// *                                                                  *
-// * This  code  implementation is the result of  the  scientific and *
-// * technical work of the GEANT4 collaboration.                      *
-// * By using,  copying,  modifying or  distributing the software (or *
-// * any work based  on the software)  you  agree  to acknowledge its *
-// * use  in  resulting  scientific  publications,  and indicate your *
-// * acceptance of all terms of the Geant4 Software license.          *
-// ********************************************************************
-//
-/// \file HistoManager.cc
-/// \brief Implementation of the HistoManager class
-
 #include "HistoManager.hh"
-
 #include "G4UnitsTable.hh"
+#include "G4SystemOfUnits.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -44,37 +16,51 @@ void HistoManager::Book()
   // Create or get analysis manager
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
   analysisManager->SetDefaultFileType("root");
-  analysisManager->SetFileName(fFileName);
+  analysisManager->SetFileName("Cu64_simulation");
+  analysisManager->SetNtupleMerging(true); 
   analysisManager->SetVerboseLevel(1);
-  analysisManager->SetActivation(true);  // enable inactivation of histograms
+  analysisManager->SetActivation(true);
 
-  // Define histograms start values
-  const G4int kMaxHisto = 10;
-  const G4String id[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-  const G4String title[] = {
-    "dummy",  // 0
-    "energy spectrum (%): e+ e-",  // 1
-    "energy spectrum (%): nu_e anti_nu_e",  // 2
-    "energy spectrum (%): gamma",  // 3
-    "energy spectrum (%): alpha",  // 4
-    "energy spectrum (%): ions",  // 5
-    "total kinetic energy per single decay (Q)",  // 6
-    "momentum balance",  // 7
-    "total time of life of decay chain",  // 8
-    "total visible energy in decay chain"  // 9
-  };
+  // --- CREAZIONE ISTOGRAMMI CON RANGE E BINNING DEDICATI ---
+  
+  // 0: Dummy
+  analysisManager->CreateH1("0", "dummy", 100, 0., 1.);
 
-  // Default values (to be reset via /analysis/h1/set command)
-  G4int nbins = 100;
-  G4double vmin = 0.;
-  G4double vmax = 100.;
+  // 1: Positroni Beta+ (0 -> 1.0 MeV)
+  analysisManager->CreateH1("1", "energy spectrum (%): positron (beta+)", 200, 0.0, 1.0);
 
-  // Create all histograms as inactivated
-  // as we have not yet set nbins, vmin, vmax
-  for (G4int k = 0; k < kMaxHisto; k++) {
-    G4int ih = analysisManager->CreateH1(id[k], title[k], nbins, vmin, vmax);
-    analysisManager->SetH1Activation(ih, false);
+  // 2: Neutrini (0 -> 1.0 MeV)
+  analysisManager->CreateH1("2", "energy spectrum (%): nu_e anti_nu_e", 200, 0.0, 1.0);
+
+  // 3: Gamma e X (0 -> 1.5 MeV)
+  analysisManager->CreateH1("3", "energy spectrum (%): gamma", 300, 0.0, 1.5);
+
+  // 4: Alpha (0 -> 10 MeV)
+  analysisManager->CreateH1("4", "energy spectrum (%): alpha", 100, 0.0, 10.0);
+
+  // 5: Ioni di rinculo (0 -> 0.1 MeV)
+  analysisManager->CreateH1("5", "energy spectrum (%): ions", 100, 0.0, 0.1);
+
+  // 6: Q-value totale (0 -> 2.0 MeV)
+  analysisManager->CreateH1("6", "total kinetic energy per single decay (Q)", 200, 0.0, 2.0);
+
+  // 7: Bilancio di impulso
+  analysisManager->CreateH1("7", "momentum balance", 100, 0.0, 2.0);
+
+  // 8: Lifetime catena (in secondi, ad es. fino a 100 ore)
+  analysisManager->CreateH1("8", "total time of life of decay chain (s)", 200, 0.0, 360000.0);
+
+  // 9: Energia visibile totale
+  analysisManager->CreateH1("9", "total visible energy in decay chain", 200, 0.0, 2.0);
+
+  // 10: Elettroni Beta- e Conversione Interna (0 -> 1.0 MeV)
+  analysisManager->CreateH1("10", "energy spectrum: electron (beta-)", 200, 0.0, 1.0);
+
+  // 11: Elettroni Auger / Bassa energia (< 20 keV) -> Binning fine da 10 eV/bin!
+  analysisManager->CreateH1("11", "energy spectrum: electron (Auger/IC <20keV)", 2000, 0.0, 20.0);
+
+  // ATTIVAZIONE AUTOMATICA: attiva tutti gli istogrammi creati
+  for (G4int i = 0; i < analysisManager->GetNofH1s(); ++i) {
+    analysisManager->SetH1Activation(i, true);
   }
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

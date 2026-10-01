@@ -1,24 +1,36 @@
-# macro for 64Cu
-#
-/analysis/setFileName Cu64_simulation
+# Macro for 64Cu 
 #
 /control/cout/ignoreThreadsExcept 0
 /control/verbose 2
 /run/verbose 1
 #
-# Set a very high time threshold to allow all decays to happen
-/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
+# Soglia temporale per permettere tutti i decadimenti
+/process/had/rdm/thresholdForVeryLongDecayTime 3.1536e+67 s
 #
 /gun/particle ion
 /gun/ion 29 64 0 0
-#
-/rdecay01/fullChain false
 #
 /process/em/fluo true
 /process/em/auger true
 /process/em/pixe true
 #
 /run/setCut 1 um
-#/run/printProgress 1
-/rdecay01/fullChain false
-/run/beamOn 100
+#
+/analysis/setFileName Cu64_simulation
+#
+# Configurazione ottimizzata dei bin per Geant4:
+/analysis/h1/set 1   3000  0. 1500 keV    # Spettro Positroni (beta+)
+/analysis/h1/set 2   1500  0. 1500 keV    # Spettro Neutrini
+/analysis/h1/set 3   3000  0. 1500 keV    # Spettro Gamma e X
+/analysis/h1/set 6   3000  0. 2500 keV    # Total Kinetic Energy (Q)
+/analysis/h1/set 7   1500  0. 15e3 keV    # Momentum Balance
+/analysis/h1/set 8   1200  0. 300 h       # Lifetime
+/analysis/h1/set 9   3000  0. 3. MeV      # Visible Energy
+/analysis/h1/set 10  3000  0. 1500 keV    # Spettro Elettroni (beta-)
+/analysis/h1/set 11  2000  0. 20 keV      # Spettro Auger / IC (<20 keV, 10 eV/bin)
+
+# ==========================================
+#
+/run/initialize
+/run/printProgress 100000
+/run/beamOn 1000000
