@@ -163,6 +163,10 @@ void Run::EndOfRun()
   sValueCyto *= 1000.;
   rmsSValueCyto *= 1000.;
 
+  G4cout.precision(6);
+  G4cout << "\n S value for cytoplasm (C<-N) = " << sValueCyto / gray << " mGy/Bq.s "
+       << " +- " << rmsSValueCyto / gray << " mGy/Bq.s " << G4endl;
+
   // Compute S-value for nucleus (N<-C)
 
   fNuclEdeposit /= numberOfEvent;
