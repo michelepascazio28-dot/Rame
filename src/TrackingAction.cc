@@ -56,25 +56,25 @@ void TrackingAction::PreUserTrackingAction(const G4Track* track)
       G4double globalTime = fParentDecayTime;
 
       if (particle == G4Positron::Positron()) {
-        analysisManager->FillH1(1, Ekin / CLHEP::MeV);
+        analysisManager->FillH1(1, Ekin);
         analysisManager->FillH1(8, globalTime);
       }
       else if (particle == G4Electron::Electron()) {
-        analysisManager->FillH1(10, Ekin / CLHEP::MeV);
+        analysisManager->FillH1(10, Ekin);
         analysisManager->FillH1(8, globalTime);
 
         if (Ekin <= 20.0 * CLHEP::keV) {
-          analysisManager->FillH1(11, Ekin / CLHEP::keV);
+          analysisManager->FillH1(11, Ekin);
         }
       }
       else if (particle == G4NeutrinoE::NeutrinoE() || particle == G4AntiNeutrinoE::AntiNeutrinoE()) {
-        analysisManager->FillH1(2, Ekin / CLHEP::MeV);
+        analysisManager->FillH1(2, Ekin);
       }
       else if (particle == G4Gamma::Gamma()) {
-        analysisManager->FillH1(3, Ekin / CLHEP::MeV);
+        analysisManager->FillH1(3, Ekin);
       }
       else if (particle->GetPDGCharge() > 2. || particle->GetParticleType() == "nucleus") {
-        analysisManager->FillH1(5, Ekin / CLHEP::MeV);
+        analysisManager->FillH1(5, Ekin);
       }
     }
   }
@@ -121,9 +121,9 @@ void TrackingAction::PostUserTrackingAction(const G4Track* track)
     }
     G4double Pbal = Pbalance.mag();
     run->Balance(EkinTot, Pbal);
-    analysis->FillH1(6, EkinTot / CLHEP::MeV);
-    fEvent->AddQvalue(EkinTot / CLHEP::MeV);
-    analysis->FillH1(7, Pbal / CLHEP::MeV);
+    analysis->FillH1(6, EkinTot);
+    fEvent->AddQvalue(EkinTot);
+    analysis->FillH1(7, Pbal);
     fEvent->AddEvisible(EkinVis);
   }
 
