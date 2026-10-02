@@ -1,0 +1,26 @@
+# --- File: run_membrane.mac ---
+
+# 1. Inizializzazione
+/run/initialize
+
+# 2. Configurazione Sorgente
+/gps/particle ion
+/gps/ion 29 64 0 0
+/gps/energy 0 eV
+
+# 3. Configurazione Geometrica (Membrana)
+# Usiamo una geometria a "Shell" (guscio)
+/gps/pos/type Volume
+/gps/pos/shape Sphere
+# Modifica questi valori in base alla dimensione reale della tua cellula
+/gps/pos/radius 10.0 um         # Raggio esterno della cellula
+/gps/pos/inner_radius 9.8 um   # Raggio interno (spessore di 0.2 um)
+
+# Fondamentale: confiniamo le particelle solo nel volume della membrana
+/gps/pos/confine Cell_Log # Non avendo una membrana separata, confiniamo al volume totale della cellula
+
+# 4. Configurazione Angolare
+/gps/ang/type iso
+
+# 5. Esecuzione
+/run/beamOn 500000

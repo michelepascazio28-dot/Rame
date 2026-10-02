@@ -1,0 +1,22 @@
+# 1. Inizializzazione
+/run/initialize
+
+# 2. Configurazione Visualizzatore
+/vis/open OGL 600x600-0+0
+/vis/drawVolume
+/vis/viewer/set/viewpointVector 1 1 1
+/vis/viewer/set/style wireframe
+
+# 3. Configurazione Traiettorie
+/tracking/storeTrajectory 1
+/vis/scene/add/trajectories smooth
+/vis/scene/endOfEventAction accumulate
+
+# --- FILTRO ENERGETICO: Auger (Bassa energia) in ROSSO ---
+# 4. Utilità e Pulizia
+/vis/geometry/set/visibility World_Log 0 false
+#/vis/scene/add/axes 0 0 0 1 um
+/vis/viewer/flush
+
+# 5. Esecuzione
+/run/beamOn 100
