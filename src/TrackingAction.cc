@@ -1,33 +1,30 @@
 #include "TrackingAction.hh"
-
 #include "EventAction.hh"
 #include "HistoManager.hh"
 #include "Run.hh"
 #include "TrackingMessenger.hh"
 
-#include "G4IonTable.hh"
-#include "G4ParticleTypes.hh"
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4Track.hh"
-#include "G4UnitsTable.hh"
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+#include "G4AnalysisManager.hh"
+#include "G4VProcess.hh"
+#include "G4Positron.hh"
+#include "G4Electron.hh"
+#include "G4NeutrinoE.hh"
+#include "G4AntiNeutrinoE.hh"
+#include "G4Gamma.hh"
+#include "G4Alpha.hh"
 
 TrackingAction::TrackingAction(EventAction* event) : fEvent(event)
-
 {
   fTrackMessenger = new TrackingMessenger(this);
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TrackingAction::~TrackingAction()
 {
   delete fTrackMessenger;
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void TrackingAction::SetTimeWindow(G4double t1, G4double dt)
 {
@@ -35,101 +32,82 @@ void TrackingAction::SetTimeWindow(G4double t1, G4double dt)
   fTimeWindow2 = fTimeWindow1 + dt;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 void TrackingAction::PreUserTrackingAction(const G4Track* track)
 {
   Run* run = static_cast<Run*>(G4RunManager::GetRunManager()->GetNonConstCurrentRun());
 
   G4ParticleDefinition* particle = track->GetDefinition();
   G4String name = particle->GetParticleName();
-  fCharge = particle->GetPDGCharge();
-  fMass = particle->GetPDGMass();
-
-  G4double Ekin = track->GetKineticEnergy();
+  G4double Ekin = track->GetKineticEnergy(); // in MeV
   G4int ID = track->GetTrackID();
 
-  G4bool condition = false;
-
-  // check LifeTime
-  //
   G4double meanLife = particle->GetPDGLifeTime();
-
-  // count particles
-  //
   run->ParticleCount(name, Ekin, meanLife);
 
-  // energy spectrum
-  //
-  G4int ih = 0;
-  if (particle == G4Electron::Electron() || particle == G4Positron::Positron())
-    ih = 1;
-  else if (particle == G4NeutrinoE::NeutrinoE() || particle == G4AntiNeutrinoE::AntiNeutrinoE())
-    ih = 2;
-  else if (particle == G4Gamma::Gamma())
-    ih = 3;
-  else if (particle == G4Alpha::Alpha())
-    ih = 4;
-  else if (fCharge > 2.)
-    ih = 5;
-  if (ih) G4AnalysisManager::Instance()->FillH1(ih, Ekin);
+  // ---- PRODOTTI DI DECADIMENTO ED EFFETTI ATOMICI SECONDARI (ID > 1) ----
+  if (ID > 1) {
+    auto analysisManager = G4AnalysisManager::Instance();
 
-  // Ion
-  //
-  if (fCharge > 2.) {
-    // build decay chain
-    if (ID == 1)
-      fEvent->AddDecayChain(name);
-    else
-      fEvent->AddDecayChain(" ---> " + name);
-    //
-    // full chain: put at rest; if not: kill secondary
-    G4Track* tr = (G4Track*)track;
-    if (fFullChain) {
-      tr->SetKineticEnergy(0.);
-      tr->SetTrackStatus(fStopButAlive);
+    const G4VProcess* creator = track->GetCreatorProcess();
+    G4String procName = creator ? creator->GetProcessName() : "";
+
+    if (G4StrUtil::contains(procName, "RadioactiveDecay") || G4StrUtil::contains(procName, "Decay")) {
+
+      G4double globalTime = fParentDecayTime;
+
+      if (particle == G4Positron::Positron()) {
+        analysisManager->FillH1(1, Ekin / CLHEP::MeV);
+        analysisManager->FillH1(8, globalTime);
+      }
+      else if (particle == G4Electron::Electron()) {
+        analysisManager->FillH1(10, Ekin / CLHEP::MeV);
+        analysisManager->FillH1(8, globalTime);
+
+        if (Ekin <= 20.0 * CLHEP::keV) {
+          analysisManager->FillH1(11, Ekin / CLHEP::keV);
+        }
+      }
+      else if (particle == G4NeutrinoE::NeutrinoE() || particle == G4AntiNeutrinoE::AntiNeutrinoE()) {
+        analysisManager->FillH1(2, Ekin / CLHEP::MeV);
+      }
+      else if (particle == G4Gamma::Gamma()) {
+        analysisManager->FillH1(3, Ekin / CLHEP::MeV);
+      }
+      else if (particle->GetPDGCharge() > 2. || particle->GetParticleType() == "nucleus") {
+        analysisManager->FillH1(5, Ekin / CLHEP::MeV);
+      }
     }
-    else if (ID > 1)
-      tr->SetTrackStatus(fStopAndKill);
-    //
-    fTimeBirth = track->GetGlobalTime();
   }
 
-  // example of saving random number seed of this fEvent, under condition
-  //
-  ////condition = (ih == 3);
-  if (condition) G4RunManager::GetRunManager()->rndmSaveThisEvent();
+  // ---- IONE PRIMARIO ----
+  if (particle->GetPDGCharge() > 2. || particle->GetParticleType() == "nucleus") {
+    if (ID == 1) {
+      fEvent->AddDecayChain(name);
+    } else {
+      fEvent->AddDecayChain(" ---> " + name);
+    }
+    fTimeBirth = track->GetGlobalTime();
+  }
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void TrackingAction::PostUserTrackingAction(const G4Track* track)
 {
-  // keep only ions
-  //
-  if (fCharge < 3.) return;
+  if (track->GetDefinition()->GetPDGCharge() < 3.) return;
 
   Run* run = static_cast<Run*>(G4RunManager::GetRunManager()->GetNonConstCurrentRun());
-
   G4AnalysisManager* analysis = G4AnalysisManager::Instance();
 
-  // get time
-  //
-  G4double time = fParentDecayTime;
+  G4double time = track->GetGlobalTime();
   G4int ID = track->GetTrackID();
   if (ID == 1) {
-  run->PrimaryTiming(time);
-  fParentDecayTime = time;   // <-- AGGIUNTA: memorizza il vero tempo di decadimento
+    run->PrimaryTiming(time);
+    fParentDecayTime = time;   // tempo vero del decadimento, in ns (unità native Geant4)
   }
 
-  // energy and momentum balance (from secondaries)
-  //
   const std::vector<const G4Track*>* secondaries = track->GetStep()->GetSecondaryInCurrentStep();
-  size_t nbtrk = (*secondaries).size();
+  size_t nbtrk = secondaries ? secondaries->size() : 0;
+
   if (nbtrk) {
-    // there are secondaries --> it is a decay
-    //
-    // balance
     G4double EkinTot = 0., EkinVis = 0.;
     G4ThreeVector Pbalance = -track->GetMomentum();
     for (size_t itr = 0; itr < nbtrk; itr++) {
@@ -137,33 +115,24 @@ void TrackingAction::PostUserTrackingAction(const G4Track* track)
       G4ParticleDefinition* particle = trk->GetDefinition();
       G4double Ekin = trk->GetKineticEnergy();
       EkinTot += Ekin;
-      G4bool visible =
-        !((particle == G4NeutrinoE::NeutrinoE()) || (particle == G4AntiNeutrinoE::AntiNeutrinoE()));
+      G4bool visible = !((particle == G4NeutrinoE::NeutrinoE()) || (particle == G4AntiNeutrinoE::AntiNeutrinoE()));
       if (visible) EkinVis += Ekin;
-      // exclude gamma desexcitation from momentum balance
       if (particle != G4Gamma::Gamma()) Pbalance += trk->GetMomentum();
     }
     G4double Pbal = Pbalance.mag();
     run->Balance(EkinTot, Pbal);
-    analysis->FillH1(6, EkinTot);
-    analysis->FillH1(7, Pbal);
+    analysis->FillH1(6, EkinTot / CLHEP::MeV);
+    fEvent->AddQvalue(EkinTot / CLHEP::MeV);
+    analysis->FillH1(7, Pbal / CLHEP::MeV);
     fEvent->AddEvisible(EkinVis);
   }
 
-  // no secondaries --> end of chain
-  //
   if (!nbtrk) {
-    run->EventTiming(time);  // total time of life
-    G4double weight = track->GetWeight();
-    analysis->FillH1(8, time, weight);
-    ////    analysis->FillH1(8,time);
+    run->EventTiming(time);
     fTimeEnd = DBL_MAX;
   }
 
-  // count activity in time window
-  //
   run->SetTimeWindow(fTimeWindow1, fTimeWindow2);
-
   G4String name = track->GetDefinition()->GetParticleName();
   G4bool life1(false), life2(false), decay(false);
   if ((fTimeBirth <= fTimeWindow1) && (fTimeEnd > fTimeWindow1)) life1 = true;
@@ -171,5 +140,3 @@ void TrackingAction::PostUserTrackingAction(const G4Track* track)
   if ((fTimeEnd > fTimeWindow1) && (fTimeEnd < fTimeWindow2)) decay = true;
   if (life1 || life2 || decay) run->CountInTimeWindow(name, life1, life2, decay);
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

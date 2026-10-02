@@ -350,13 +350,13 @@ void Run::EndOfRun()
 
   // normalize histograms
   //
-  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-  G4double factor = 100. / nbEvents;
-  analysisManager->ScaleH1(1, factor);
-  analysisManager->ScaleH1(2, factor);
-  analysisManager->ScaleH1(3, factor);
-  analysisManager->ScaleH1(4, factor);
-  analysisManager->ScaleH1(5, factor);
+  //G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+  //G4double factor = 100. / nbEvents;
+  //analysisManager->ScaleH1(1, factor);
+  //analysisManager->ScaleH1(2, factor);
+  //analysisManager->ScaleH1(3, factor);
+  //analysisManager->ScaleH1(4, factor);
+  //analysisManager->ScaleH1(5, factor);
 
   // remove all contents in fParticleDataMap
   //

@@ -1,6 +1,5 @@
 # Macro for 64Cu 
 #
-/control/cout/ignoreThreadsExcept 0
 /control/verbose 2
 /run/verbose 1
 #
