@@ -41,9 +41,9 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
   G4double displacement = (annihilationPoint - creationVertex).mag();
 
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-  analysisManager->FillH1(10, r_creation);
-  analysisManager->FillH1(11, r_annihilation);
-  analysisManager->FillH1(12, displacement);
+  analysisManager->FillH1(0, r_creation);
+  analysisManager->FillH1(1, r_annihilation);
+  analysisManager->FillH1(2, displacement);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
