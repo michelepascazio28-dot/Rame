@@ -188,7 +188,7 @@ void TrackerSD::EndOfEvent(G4HCofThisEvent*)
   // Fill ntuple including weighting
   analysisManager->FillNtupleDColumn(1, radius / nm);
   analysisManager->FillNtupleDColumn(2, nofHits);
-  analysisManager->FillNtupleDColumn(3, nbEdep);
+  analysisManager->FillNtupleDColumn(3, nbEdep); // Numero di hits con energia depositata nel dominio
   analysisManager->FillNtupleDColumn(4, (epsilon / eV) / (chord / nm));
   analysisManager->FillNtupleDColumn(5, (epsilon / mass) / gray);
   analysisManager->FillNtupleDColumn(6, Einc / eV);
