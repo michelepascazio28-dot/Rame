@@ -648,3 +648,11 @@ G4WT6 > --> Event 6000 starts with initial seeds (63670041,65688080).
 G4WT0 > --> Event 7000 starts with initial seeds (17015429,70115193).
 G4WT7 > --> Event 8000 starts with initial seeds (71550951,83808318).
 G4WT2 > --> Event 9000 starts with initial seeds (40131764,16446922).
+G4WT4 > --> Event 10000 starts with initial seeds (31551383,64410712).
+G4WT5 > --> Event 11000 starts with initial seeds (73540892,83623432).
+G4WT5 > --> Event 12000 starts with initial seeds (83254340,64257417).
+G4WT5 > --> Event 13000 starts with initial seeds (24480507,2415715).
+G4WT5 > --> Event 14000 starts with initial seeds (6687388,44167515).
+G4WT5 > --> Event 15000 starts with initial seeds (37495107,82020158).
+G4WT7 > --> Event 16000 starts with initial seeds (50230312,89313579).
+G4WT4 > --> Event 17000 starts with initial seeds (65277430,31427736).
