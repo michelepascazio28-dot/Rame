@@ -36,8 +36,7 @@ G4bool CalorimeterSD_Cyto::ProcessHits(G4Step* step, G4TouchableHistory*)
 
 void CalorimeterSD_Cyto::EndOfEvent(G4HCofThisEvent*)
 {
-    if (fMass > 0.) {
-        G4double dose = fEdepSum / fMass;
+    G4double dose = (fMass > 0.) ? fEdepSum / fMass : 0.;
         
 
         // G4cout << "--> SD [" << GetName() << "] Dose: " << dose / gray 
@@ -45,9 +44,8 @@ void CalorimeterSD_Cyto::EndOfEvent(G4HCofThisEvent*)
                
         // Salvo la dose
 
-        G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-
-        analysisManager->FillNtupleDColumn(fcolID, dose / gray); // Colonna 0 per la dose
+    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+    analysisManager->FillNtupleDColumn(fcolID, dose / gray); // Colonna 0 per la dose
         // analysisManager->AddNtupleRow();
-    }
+    
 }

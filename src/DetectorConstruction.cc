@@ -87,18 +87,7 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
 
 void DetectorConstruction::ConstructSDandField()
 {
-  // Primo SD
-  G4String trackerChamberSDname = "TrackerChamberSD";
-
-  auto* aTrackerSD = new TrackerSD(trackerChamberSDname, "TrackerHitsCollection");
-  // qui stiamo settando il raggio di SD
-  aTrackerSD->SetRadius(fRadius);
-
-  G4SDManager::GetSDMpointer()->AddNewDetector(aTrackerSD);
-
-  SetSensitiveDetector("Nucl_LV", aTrackerSD, true);
-
-  // Secondo SD
+  // 1) Calorimetro nucleo (colonna 7)
   G4String CalorimeterSDname = "CalorimeterSD_Nucl";
 
   auto* aCalorimeterSD = new CalorimeterSD_Nucl(CalorimeterSDname, 7);
@@ -107,7 +96,7 @@ void DetectorConstruction::ConstructSDandField()
 
   SetSensitiveDetector("Nucl_LV", aCalorimeterSD, true);
 
-  // Secondo SD
+  // 2) Calorimetro citoplasma (colonna 8)
   G4String CalorimeterSDname_1 = "CalorimeterSD_Cyto";
 
   auto* aCalorimeterSD_1 = new CalorimeterSD_Cyto(CalorimeterSDname_1, 8);
@@ -115,6 +104,17 @@ void DetectorConstruction::ConstructSDandField()
   G4SDManager::GetSDMpointer()->AddNewDetector(aCalorimeterSD_1);
 
   SetSensitiveDetector("Cyto_LV", aCalorimeterSD_1, true);
+
+  // 3) Tracker per ULTIMO: il suo EndOfEvent chiama AddNtupleRow(),
+  //    quindi deve partire dopo che i calorimetri hanno riempito le colonne 7 e 8
+  G4String trackerChamberSDname = "TrackerChamberSD";
+
+  auto* aTrackerSD = new TrackerSD(trackerChamberSDname, "TrackerHitsCollection");
+  aTrackerSD->SetRadius(fRadius);
+
+  G4SDManager::GetSDMpointer()->AddNewDetector(aTrackerSD);
+
+  SetSensitiveDetector("Nucl_LV", aTrackerSD, true);
 }
 
 void DetectorConstruction::SetTrackingCut(const G4double& value)
