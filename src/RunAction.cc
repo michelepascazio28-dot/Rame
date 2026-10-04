@@ -21,8 +21,8 @@ RunAction::RunAction() : G4UserRunAction()
   // Create ntuple
 
   analysisManager->CreateNtuple("yz", "yz-distributions");
-  analysisManager->CreateNtupleDColumn("radius");
   analysisManager->CreateNtupleDColumn("eventID");
+  analysisManager->CreateNtupleDColumn("radius");
   analysisManager->CreateNtupleDColumn("nbHits");
   analysisManager->CreateNtupleDColumn("nbScoredHits");
   analysisManager->CreateNtupleDColumn("y");

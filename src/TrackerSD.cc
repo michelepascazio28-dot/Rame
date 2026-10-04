@@ -52,16 +52,16 @@ G4bool TrackerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   // newHit->Print();
 
   // Log hit position and volume for testing (append)
-  {
-    auto* pv = aStep->GetPreStepPoint()->GetPhysicalVolume();
-    const char* volName = pv ? pv->GetName().c_str() : "(null)";
-    G4ThreeVector pos = newHit->GetPos();
-    FILE* flog = std::fopen("hits_log.txt", "a");
-    if (flog) {
-      std::fprintf(flog, "%s %g %g %g\n", volName, pos.x()/CLHEP::nm, pos.y()/CLHEP::nm, pos.z()/CLHEP::nm);
-      std::fclose(flog);
-    }
-  }
+  //{
+  //  auto* pv = aStep->GetPreStepPoint()->GetPhysicalVolume();
+  //  const char* volName = pv ? pv->GetName().c_str() : "(null)";
+  //  G4ThreeVector pos = newHit->GetPos();
+  //  FILE* flog = std::fopen("hits_log.txt", "a");
+  //  if (flog) {
+  //    std::fprintf(flog, "%s %g %g %g\n", volName, pos.x()/CLHEP::nm, pos.y()/CLHEP::nm, pos.z()/CLHEP::nm);
+  //    std::fclose(flog);
+  //  }
+  //}
 
   return true;
 }
