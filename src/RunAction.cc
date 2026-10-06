@@ -1,4 +1,5 @@
 #include "RunAction.hh"
+#include "G4SystemOfUnits.hh" 
 
 #include "G4AnalysisManager.hh"
 
@@ -33,9 +34,9 @@ RunAction::RunAction() : G4UserRunAction()
 
   analysisManager->FinishNtuple();
 
-  analysisManager->CreateH1("r_creation", "Radial position of e+ emission", 400, 0., 2000., "um");
-  analysisManager->CreateH1("r_annihilation", "Radial position of e+ annihilation", 400, 0., 2000., "um");
-  analysisManager->CreateH1("displacement", "e+ emission-to-annihilation distance", 400, 0., 2000., "um");
+  analysisManager->CreateH1("r_creation",     "Radial position of e+ emission",        100, 0., 5. * um, "um");
+  analysisManager->CreateH1("r_annihilation", "Radial position of e+ annihilation",    600, 0., 3. * mm, "um");
+  analysisManager->CreateH1("displacement",   "e+ emission-to-annihilation distance",  600, 0., 3. * mm, "um");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
