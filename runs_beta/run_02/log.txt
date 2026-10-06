@@ -643,3 +643,22 @@ G4WT0 > --> Event 1000 starts with initial seeds (5465385,94573600).
 G4WT2 > --> Event 2000 starts with initial seeds (96313289,73695943).
 G4WT5 > --> Event 3000 starts with initial seeds (92938580,7733920).
 G4WT5 > --> Event 4000 starts with initial seeds (20823900,37769967).
+G4WT5 > --> Event 5000 starts with initial seeds (41934230,87284018).
+G4WT4 > --> Event 6000 starts with initial seeds (17874135,53694496).
+G4WT1 > --> Event 7000 starts with initial seeds (18055088,45601509).
+G4WT0 > --> Event 8000 starts with initial seeds (8028596,14657478).
+G4WT0 > --> Event 9000 starts with initial seeds (54360570,53615025).
+G4WT5 > --> Event 10000 starts with initial seeds (77219103,11093419).
+G4WT0 > --> Event 11000 starts with initial seeds (61782429,82982924).
+G4WT3 > --> Event 12000 starts with initial seeds (74945018,21073519).
+G4WT5 > --> Event 13000 starts with initial seeds (95534586,79387928).
+G4WT3 > --> Event 14000 starts with initial seeds (27251710,8912441).
+G4WT0 > --> Event 15000 starts with initial seeds (10849229,72499359).
+G4WT1 > --> Event 16000 starts with initial seeds (3287197,66609639).
+G4WT1 > --> Event 17000 starts with initial seeds (29308444,92422443).
+G4WT1 > --> Event 18000 starts with initial seeds (45898260,54529697).
+G4WT3 > --> Event 19000 starts with initial seeds (28527918,48390427).
+... write file : yz.root - done
+... close file : yz.root - done
+Graphics systems deleted.
+Visualization Manager deleting...
