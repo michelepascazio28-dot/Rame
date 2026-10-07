@@ -656,3 +656,9 @@ G4WT7 > --> Event 14000 starts with initial seeds (22459886,671874).
 G4WT5 > --> Event 15000 starts with initial seeds (44910348,54743154).
 G4WT5 > --> Event 16000 starts with initial seeds (48679010,14454443).
 G4WT1 > --> Event 17000 starts with initial seeds (35485977,7053619).
+G4WT7 > --> Event 18000 starts with initial seeds (78000770,6385392).
+G4WT2 > --> Event 19000 starts with initial seeds (1547126,16027199).
+... write file : yz.root - done
+... close file : yz.root - done
+Graphics systems deleted.
+Visualization Manager deleting...

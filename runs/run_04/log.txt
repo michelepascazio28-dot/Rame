@@ -9,7 +9,7 @@
                              WWW : http://geant4.org/
 **************************************************************
 
-##### Create analysis manager   0x65094b2b84f0
+##### Create analysis manager   0x570ce68834a0
 Using  analysis manager
 Visualization Manager instantiating with verbosity "warnings (3)"...
 Visualization Manager initialising...
@@ -592,22 +592,22 @@ G4VDecayChannel::FillDaughters() - [ eta_prime ]0:rho0 is not defined !!
  The BR of this decay mode is set to zero.
 G4VDecayChannel::FillDaughters() - [ eta_prime ]0:omega is not defined !!
  The BR of this decay mode is set to zero.
-G4WT6 > ##### Create analysis manager   0x714d780795f0
-G4WT5 > ##### Create analysis manager   0x714d740795f0
-G4WT7 > ##### Create analysis manager   0x714d6c0795f0
-G4WT0 > ##### Create analysis manager   0x714d90079770
+G4WT0 > ##### Create analysis manager   0x7547c4079770
+G4WT0 > Using  analysis manager
+G4WT1 > ##### Create analysis manager   0x7547c0079600
+G4WT2 > ##### Create analysis manager   0x7547b8079600
+G4WT1 > Using  analysis manager
+G4WT2 > Using  analysis manager
+G4WT3 > ##### Create analysis manager   0x7547bc0795f0
+G4WT6 > ##### Create analysis manager   0x7547a80795f0
+G4WT7 > ##### Create analysis manager   0x7547ac0795f0
+G4WT3 > Using  analysis manager
 G4WT6 > Using  analysis manager
 G4WT7 > Using  analysis manager
-G4WT5 > Using  analysis manager
-G4WT0 > Using  analysis manager
-G4WT3 > ##### Create analysis manager   0x714d800795f0
-G4WT3 > Using  analysis manager
-G4WT4 > ##### Create analysis manager   0x714d7c079620
-G4WT2 > ##### Create analysis manager   0x714d8c079600
-G4WT2 > Using  analysis manager
+G4WT4 > ##### Create analysis manager   0x7547b0079620
 G4WT4 > Using  analysis manager
-G4WT1 > ##### Create analysis manager   0x714d88079600
-G4WT1 > Using  analysis manager
+G4WT5 > ##### Create analysis manager   0x7547b40795f0
+G4WT5 > Using  analysis manager
 
 ### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
           DefaultRegionForTheWorld  1  1  0
@@ -622,41 +622,41 @@ G4WT1 > Using  analysis manager
 ... create file : yz.root - done
 ... open analysis file : yz.root - done
 ... open main analysis file : yz.root - done
-G4WT2 > ### Run 0 starts on worker thread 2.
-G4WT2 > ... set ntuple merging row mode : row-wise - done
-G4WT2 > --> Event 0 starts with initial seeds (15965776,56584743).
-G4WT5 > ### Run 0 starts on worker thread 5.
-G4WT5 > ... set ntuple merging row mode : row-wise - done
 G4WT6 > ### Run 0 starts on worker thread 6.
 G4WT6 > ... set ntuple merging row mode : row-wise - done
+G4WT6 > --> Event 0 starts with initial seeds (15965776,56584743).
+G4WT5 > ### Run 0 starts on worker thread 5.
+G4WT5 > ... set ntuple merging row mode : row-wise - done
+G4WT4 > ### Run 0 starts on worker thread 4.
+G4WT4 > ... set ntuple merging row mode : row-wise - done
 G4WT0 > ### Run 0 starts on worker thread 0.
 G4WT0 > ... set ntuple merging row mode : row-wise - done
 G4WT7 > ### Run 0 starts on worker thread 7.
 G4WT7 > ... set ntuple merging row mode : row-wise - done
-G4WT3 > ### Run 0 starts on worker thread 3.
-G4WT3 > ... set ntuple merging row mode : row-wise - done
-G4WT4 > ### Run 0 starts on worker thread 4.
-G4WT4 > ... set ntuple merging row mode : row-wise - done
+G4WT2 > ### Run 0 starts on worker thread 2.
+G4WT2 > ... set ntuple merging row mode : row-wise - done
 G4WT1 > ### Run 0 starts on worker thread 1.
 G4WT1 > ... set ntuple merging row mode : row-wise - done
-G4WT1 > --> Event 1000 starts with initial seeds (33945228,82577772).
-G4WT6 > --> Event 2000 starts with initial seeds (80552919,57287788).
+G4WT3 > ### Run 0 starts on worker thread 3.
+G4WT3 > ... set ntuple merging row mode : row-wise - done
+G4WT3 > --> Event 1000 starts with initial seeds (33945228,82577772).
+G4WT0 > --> Event 2000 starts with initial seeds (80552919,57287788).
 G4WT2 > --> Event 3000 starts with initial seeds (15658735,8391212).
-G4WT6 > --> Event 4000 starts with initial seeds (42260306,20942891).
-G4WT7 > --> Event 5000 starts with initial seeds (29355822,86842866).
-G4WT6 > --> Event 6000 starts with initial seeds (83174034,99446519).
-G4WT7 > --> Event 7000 starts with initial seeds (87118461,81398897).
-G4WT0 > --> Event 8000 starts with initial seeds (55261421,65949827).
+G4WT4 > --> Event 4000 starts with initial seeds (42260306,20942891).
+G4WT5 > --> Event 5000 starts with initial seeds (29355822,86842866).
+G4WT5 > --> Event 6000 starts with initial seeds (83174034,99446519).
+G4WT3 > --> Event 7000 starts with initial seeds (87118461,81398897).
+G4WT6 > --> Event 8000 starts with initial seeds (55261421,65949827).
 G4WT0 > --> Event 9000 starts with initial seeds (55884348,7687157).
-G4WT2 > --> Event 10000 starts with initial seeds (39992065,88432368).
-G4WT5 > --> Event 11000 starts with initial seeds (11409557,76918876).
-G4WT1 > --> Event 12000 starts with initial seeds (43397823,46918388).
-G4WT4 > --> Event 13000 starts with initial seeds (39117359,45013997).
-G4WT5 > --> Event 14000 starts with initial seeds (31430520,53670551).
-G4WT7 > --> Event 15000 starts with initial seeds (68353834,624108).
-G4WT0 > --> Event 16000 starts with initial seeds (97894128,92954936).
-G4WT3 > --> Event 17000 starts with initial seeds (51947694,49818769).
-G4WT3 > --> Event 18000 starts with initial seeds (66917922,36655693).
+G4WT7 > --> Event 11000 starts with initial seeds (11409557,76918876).
+G4WT4 > --> Event 10000 starts with initial seeds (39992065,88432368).
+G4WT4 > --> Event 12000 starts with initial seeds (43397823,46918388).
+G4WT1 > --> Event 13000 starts with initial seeds (39117359,45013997).
+G4WT4 > --> Event 14000 starts with initial seeds (31430520,53670551).
+G4WT4 > --> Event 15000 starts with initial seeds (68353834,624108).
+G4WT4 > --> Event 16000 starts with initial seeds (97894128,92954936).
+G4WT7 > --> Event 17000 starts with initial seeds (51947694,49818769).
+G4WT6 > --> Event 18000 starts with initial seeds (66917922,36655693).
 G4WT5 > --> Event 19000 starts with initial seeds (1311429,16751995).
 ... write file : yz.root - done
 ... close file : yz.root - done
