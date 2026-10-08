@@ -20,7 +20,7 @@
 /vis/geometry/set/forceWireframe Cyto_LV 0 true
 /vis/geometry/set/forceWireframe Nucl_LV 0 true
 /vis/geometry/set/lineWidth Cyto_LV 0 1
-/vis/geometry/set/lineWidth Nucl_LV 0 3
+/vis/geometry/set/lineWidth Nucl_LV 0 5
 
 # Vista
 /vis/viewer/set/style wireframe
@@ -34,9 +34,9 @@
 /vis/modeling/trajectories/create/drawByParticleID
 /vis/modeling/trajectories/drawByParticleID-0/set e- blue
 /vis/modeling/trajectories/drawByParticleID-0/set e+ red
-/vis/modeling/trajectories/drawByParticleID-0/set gamma 0.6 0.0 0.8 1.0
-/vis/modeling/trajectories/drawByParticleID-0/set nu_e 0.0 0.75 0.75 1.0
-/vis/modeling/trajectories/drawByParticleID-0/set anti_nu_e 0.55 0.3 0.0 1.0
+/vis/modeling/trajectories/drawByParticleID-0/setRGBA gamma 0.6 0.0 0.8 1.0
+/vis/modeling/trajectories/drawByParticleID-0/setRGBA nu_e 0.0 0.75 0.75 1.0
+/vis/modeling/trajectories/drawByParticleID-0/setRGBA anti_nu_e 0.55 0.3 0.0 1.0
 /vis/modeling/trajectories/drawByParticleID-0/default/setLineWidth 3
 /vis/modeling/trajectories/drawByParticleID-0/default/setDrawStepPts true
 /vis/modeling/trajectories/drawByParticleID-0/default/setStepPtsSize 4

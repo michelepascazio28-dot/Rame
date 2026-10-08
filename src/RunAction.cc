@@ -31,6 +31,7 @@ RunAction::RunAction() : G4UserRunAction()
   analysisManager->CreateNtupleDColumn("Einc");
   analysisManager->CreateNtupleDColumn("Nuclear_dose");
   analysisManager->CreateNtupleDColumn("Cytoplasmic_dose");
+  analysisManager->CreateNtupleDColumn("r_domain_center"); // distanza [um] del centro del dominio dal centro del nucleo
 
   analysisManager->FinishNtuple();
 

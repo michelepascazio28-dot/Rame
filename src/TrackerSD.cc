@@ -211,7 +211,7 @@ void TrackerSD::EndOfEvent(G4HCofThisEvent* hce)
   analysisManager->FillNtupleDColumn(4, (epsilon / eV) / (chord / nm));
   analysisManager->FillNtupleDColumn(5, (epsilon / mass) / gray);
   analysisManager->FillNtupleDColumn(6, Einc / eV);
-  analysisManager->FillNtupleDColumn(9, randCenterPos.mag() / um); // distanza del centro del dominio dal centro del nucleo
+  analysisManager->FillNtupleDColumn(9, randCenterPos.mag() / um); // distanza centro dominio - centro nucleo
   analysisManager->AddNtupleRow();
 }
 
