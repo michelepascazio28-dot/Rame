@@ -9,7 +9,7 @@
                              WWW : http://geant4.org/
 **************************************************************
 
-##### Create analysis manager   0x59aea89334a0
+##### Create analysis manager   0x5a9d0a6714f0
 Using  analysis manager
 Visualization Manager instantiating with verbosity "warnings (3)"...
 Visualization Manager initialising...
@@ -592,22 +592,22 @@ G4VDecayChannel::FillDaughters() - [ eta_prime ]0:rho0 is not defined !!
  The BR of this decay mode is set to zero.
 G4VDecayChannel::FillDaughters() - [ eta_prime ]0:omega is not defined !!
  The BR of this decay mode is set to zero.
-G4WT1 > ##### Create analysis manager   0x71e064079600
-G4WT3 > ##### Create analysis manager   0x71e0580795f0
-G4WT4 > ##### Create analysis manager   0x71e05c079620
-G4WT1 > Using  analysis manager
-G4WT4 > Using  analysis manager
-G4WT3 > Using  analysis manager
-G4WT7 > ##### Create analysis manager   0x71e0480795f0
-G4WT5 > ##### Create analysis manager   0x71e0500795f0
-G4WT6 > ##### Create analysis manager   0x71e0540795f0
-G4WT7 > Using  analysis manager
-G4WT6 > Using  analysis manager
+G4WT2 > ##### Create analysis manager   0x7a0f48079600
+G4WT5 > ##### Create analysis manager   0x7a0f300795f0
+G4WT3 > ##### Create analysis manager   0x7a0f3c0795f0
+G4WT1 > ##### Create analysis manager   0x7a0f44079600
 G4WT5 > Using  analysis manager
-G4WT2 > ##### Create analysis manager   0x71e060079600
-G4WT0 > ##### Create analysis manager   0x71e06c079770
+G4WT3 > Using  analysis manager
+G4WT1 > Using  analysis manager
+G4WT6 > ##### Create analysis manager   0x7a0f340795f0
 G4WT2 > Using  analysis manager
+G4WT6 > Using  analysis manager
+G4WT7 > ##### Create analysis manager   0x7a0f280795f0
+G4WT7 > Using  analysis manager
+G4WT0 > ##### Create analysis manager   0x7a0f4c079770
+G4WT4 > ##### Create analysis manager   0x7a0f38079620
 G4WT0 > Using  analysis manager
+G4WT4 > Using  analysis manager
 
 ### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
           DefaultRegionForTheWorld  1  1  0
@@ -622,43 +622,21 @@ G4WT0 > Using  analysis manager
 ... create file : yz.root - done
 ... open analysis file : yz.root - done
 ... open main analysis file : yz.root - done
-G4WT6 > ### Run 0 starts on worker thread 6.
-G4WT6 > ... set ntuple merging row mode : row-wise - done
-G4WT6 > --> Event 0 starts with initial seeds (80881970,88846401).
-G4WT2 > ### Run 0 starts on worker thread 2.
-G4WT2 > ... set ntuple merging row mode : row-wise - done
-G4WT1 > ### Run 0 starts on worker thread 1.
-G4WT1 > ... set ntuple merging row mode : row-wise - done
 G4WT3 > ### Run 0 starts on worker thread 3.
 G4WT3 > ... set ntuple merging row mode : row-wise - done
-G4WT4 > ### Run 0 starts on worker thread 4.
-G4WT4 > ... set ntuple merging row mode : row-wise - done
+G4WT3 > --> Event 0 starts with initial seeds (80881970,88846401).
+G4WT6 > ### Run 0 starts on worker thread 6.
+G4WT6 > ... set ntuple merging row mode : row-wise - done
 G4WT7 > ### Run 0 starts on worker thread 7.
 G4WT7 > ... set ntuple merging row mode : row-wise - done
-G4WT5 > ### Run 0 starts on worker thread 5.
-G4WT5 > ... set ntuple merging row mode : row-wise - done
 G4WT0 > ### Run 0 starts on worker thread 0.
 G4WT0 > ... set ntuple merging row mode : row-wise - done
-G4WT0 > --> Event 1000 starts with initial seeds (54018613,94346304).
-G4WT2 > --> Event 2000 starts with initial seeds (98718244,15580199).
-G4WT7 > --> Event 3000 starts with initial seeds (48696191,45347333).
-G4WT3 > --> Event 4000 starts with initial seeds (77165529,19109675).
-G4WT1 > --> Event 5000 starts with initial seeds (52934862,72061376).
-G4WT0 > --> Event 6000 starts with initial seeds (87816839,49411962).
-G4WT1 > --> Event 7000 starts with initial seeds (50463059,59442166).
-G4WT2 > --> Event 8000 starts with initial seeds (73270120,32576735).
-G4WT5 > --> Event 9000 starts with initial seeds (16803145,60927785).
-G4WT4 > --> Event 10000 starts with initial seeds (90909114,50014333).
-G4WT4 > --> Event 11000 starts with initial seeds (41014866,94291755).
-G4WT4 > --> Event 12000 starts with initial seeds (29162273,62837668).
-G4WT7 > --> Event 13000 starts with initial seeds (91429666,21218714).
-G4WT1 > --> Event 14000 starts with initial seeds (1436913,24435377).
-G4WT0 > --> Event 15000 starts with initial seeds (70554553,50378759).
-G4WT3 > --> Event 16000 starts with initial seeds (41292595,83742794).
-G4WT6 > --> Event 17000 starts with initial seeds (35323043,60421406).
-G4WT5 > --> Event 18000 starts with initial seeds (30608396,37631133).
-G4WT2 > --> Event 19000 starts with initial seeds (20960285,40725544).
-... write file : yz.root - done
-... close file : yz.root - done
-Graphics systems deleted.
-Visualization Manager deleting...
+G4WT1 > ### Run 0 starts on worker thread 1.
+G4WT1 > ... set ntuple merging row mode : row-wise - done
+G4WT2 > ### Run 0 starts on worker thread 2.
+G4WT2 > ... set ntuple merging row mode : row-wise - done
+G4WT4 > ### Run 0 starts on worker thread 4.
+G4WT4 > ... set ntuple merging row mode : row-wise - done
+G4WT5 > ### Run 0 starts on worker thread 5.
+G4WT5 > ... set ntuple merging row mode : row-wise - done
+G4WT5 > --> Event 1000 starts with initial seeds (54018613,94346304).
