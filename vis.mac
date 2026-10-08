@@ -1,59 +1,83 @@
-# vis.mac - visualizzazione di nucleo e citoplasma con le tracce del decadimento di Cu-64
-# Volumi logici dal tuo DetectorConstruction: World_LV, Nucl_LV (r = 4 um), Cyto_LV (guscio 4-5 um)
-# Viene caricato da init_vis.mac (che dopo /run/initialize chiama /control/execute vis.mac)
+# vis.mac - cellula, tracce del decadimento di Cu-64 colorate per TIPO di particella,
+# dominio (sfera verde) e hit scelta (punto nero)
+# Volumi fisici: Cyto (guscio 4-5 um), Nucl (sfera r = 4 um). Volumi logici: Cyto_LV, Nucl_LV.
 
 /control/verbose 2
 /run/verbose 1
 /tracking/verbose 0
 
-# Driver grafico: OGL usa Qt se disponibile, altrimenti X11
-/vis/open OGL 900x900-0+0
+/vis/open TSG 900x900-0+0
 /vis/viewer/set/autoRefresh false
 /vis/verbose errors
 
-# Geometria: il mondo (acqua, 1 mm) va nascosto, altrimenti copre tutto
-/vis/drawVolume
-/vis/geometry/set/visibility World_LV 0 false
-/vis/geometry/set/visibility Nucl_LV 0 true
-/vis/geometry/set/visibility Cyto_LV 0 true
-/vis/geometry/set/colour Nucl_LV 0 1.0 0.6 0.1 0.35
-/vis/geometry/set/colour Cyto_LV 0 0.2 0.6 1.0 0.15
-/vis/geometry/set/forceSolid Nucl_LV 0 true
-/vis/geometry/set/forceSolid Cyto_LV 0 true
+# Scena centrata sulla cellula
+/vis/drawVolume Cyto
+/vis/scene/add/volume Nucl
+
+# Geometria a fili: citoplasma grigio sottile, nucleo arancione piu spesso
+/vis/geometry/set/colour Cyto_LV 0 0.6 0.6 0.6 1.0
+/vis/geometry/set/colour Nucl_LV 0 1.0 0.55 0.0 1.0
+/vis/geometry/set/forceWireframe Cyto_LV 0 true
+/vis/geometry/set/forceWireframe Nucl_LV 0 true
+/vis/geometry/set/lineWidth Cyto_LV 0 1
+/vis/geometry/set/lineWidth Nucl_LV 0 3
 
 # Vista
-/vis/viewer/set/viewpointVector -1 0.7 0.5
-/vis/viewer/set/lightsVector 1 1 1
-/vis/viewer/set/style surface
+/vis/viewer/set/style wireframe
 /vis/viewer/set/background white
-/vis/viewer/set/lineSegmentsPerCircle 100
+/vis/viewer/set/lineSegmentsPerCircle 24
+/vis/viewer/set/viewpointVector -1 0.7 0.5
 
-# Traiettorie colorate per particella, con punti di step (sono le hit del tuo TrackerSD)
 /vis/scene/add/trajectories smooth
+
+# --- Modello 1 (DEFAULT): colore per tipo di particella ---
 /vis/modeling/trajectories/create/drawByParticleID
-/vis/modeling/trajectories/drawByParticleID-0/default/setLineWidth 2
 /vis/modeling/trajectories/drawByParticleID-0/set e- blue
 /vis/modeling/trajectories/drawByParticleID-0/set e+ red
-/vis/modeling/trajectories/drawByParticleID-0/set gamma green
+/vis/modeling/trajectories/drawByParticleID-0/set gamma 0.6 0.0 0.8 1.0
+/vis/modeling/trajectories/drawByParticleID-0/set nu_e 0.0 0.75 0.75 1.0
+/vis/modeling/trajectories/drawByParticleID-0/set anti_nu_e 0.55 0.3 0.0 1.0
+/vis/modeling/trajectories/drawByParticleID-0/default/setLineWidth 3
 /vis/modeling/trajectories/drawByParticleID-0/default/setDrawStepPts true
-/vis/modeling/trajectories/drawByParticleID-0/default/setStepPtsSize 3
+/vis/modeling/trajectories/drawByParticleID-0/default/setStepPtsSize 4
+
+# --- Modello 2 (alternativo): colore per energia cinetica iniziale ---
+/vis/modeling/trajectories/create/drawByAttribute
+/vis/modeling/trajectories/drawByAttribute-0/setAttribute IKE
+/vis/modeling/trajectories/drawByAttribute-0/addInterval bassa 0 keV 1 keV
+/vis/modeling/trajectories/drawByAttribute-0/addInterval media 1 keV 20 keV
+/vis/modeling/trajectories/drawByAttribute-0/addInterval alta 20 keV 10 MeV
+/vis/modeling/trajectories/drawByAttribute-0/bassa/setLineColourRGBA 1.0 0.0 0.0 1.0
+/vis/modeling/trajectories/drawByAttribute-0/media/setLineColourRGBA 0.6 0.0 0.8 1.0
+/vis/modeling/trajectories/drawByAttribute-0/alta/setLineColourRGBA 0.0 0.0 0.8 1.0
+/vis/modeling/trajectories/drawByAttribute-0/default/setLineWidth 3
+/vis/modeling/trajectories/drawByAttribute-0/default/setDrawStepPts true
+/vis/modeling/trajectories/drawByAttribute-0/default/setStepPtsSize 4
+
+# Modello attivo (per cambiare dalla finestra: /vis/modeling/trajectories/select drawByAttribute-0)
 /vis/modeling/trajectories/select drawByParticleID-0
 
-# Se TrackerHit non ha un metodo Draw() questo comando non disegna nulla, ma non da errore
-/vis/scene/add/hits
+# Filtro sui neutrini: creato ma SPENTO (per nasconderli: .../particleFilter-0/active true)
+/vis/filtering/trajectories/create/particleFilter
+/vis/filtering/trajectories/particleFilter-0/add nu_e
+/vis/filtering/trajectories/particleFilter-0/add anti_nu_e
+/vis/filtering/trajectories/particleFilter-0/invert true
+/vis/filtering/trajectories/particleFilter-0/active false
 
-# Accumula gli eventi nella stessa immagine (fino a 100)
+# Hit: disegna anche il dominio (sfera verde) e la hit scelta (punto nero)
+/vis/scene/add/hits
 /vis/scene/endOfEventAction accumulate 100
 
-# Assi e scala in micron
-/vis/scene/add/axes 0 0 0 6 um
+# Solo la scala (niente assi)
 /vis/scene/add/scale 2 um
 
-# Zoom sulla cellula (il mondo e 2 mm, la cellula 10 um: serve zoom alto)
-/vis/viewer/zoomTo 150
 /vis/viewer/set/autoRefresh true
 /vis/verbose warnings
+/vis/viewer/rebuild
 
-# --- Per salvare uno screenshot dopo /run/beamOn 5 ---
-# /vis/ogl/set/exportFormat png
-# /vis/ogl/export cellula_eventi.png
+
+# Da usare internamente per vedere il citoplasma
+# /vis/geometry/set/visibility Cyto_LV 0 true
+# /vis/geometry/set/colour Cyto_LV 0 0.6 0.6 0.6 1
+# /vis/geometry/set/lineWidth Cyto_LV 0 1
+# /vis/geometry/set/lineWidth Nucl_LV 0 3

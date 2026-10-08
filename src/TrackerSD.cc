@@ -1,5 +1,6 @@
 #include "TrackerSD.hh"
 
+#include "DomainHit.hh"
 #include "G4AnalysisManager.hh"
 #include "G4SDManager.hh"
 #include "G4SystemOfUnits.hh"
@@ -11,6 +12,8 @@ TrackerSD::TrackerSD(const G4String& name, const G4String& hitsCollectionName)
   : G4VSensitiveDetector(name), fHitsCollection(nullptr)
 {
   collectionName.insert(hitsCollectionName);
+  // Seconda collezione, solo per disegnare il dominio (vedi DomainHit.hh)
+  collectionName.insert("DomainHitsCollection");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -28,6 +31,10 @@ void TrackerSD::Initialize(G4HCofThisEvent* hce)
   G4int hcID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);
 
   hce->AddHitsCollection(hcID, fHitsCollection);
+
+  // Collezione del dominio (visualizzazione)
+  G4int domID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[1]);
+  hce->AddHitsCollection(domID, new DomainHitsCollection(SensitiveDetectorName, collectionName[1]));
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -73,7 +80,7 @@ void TrackerSD::SetRadius(const G4double& value)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void TrackerSD::EndOfEvent(G4HCofThisEvent*)
+void TrackerSD::EndOfEvent(G4HCofThisEvent* hce)
 {
   G4int nofHits = fHitsCollection->entries();
 
@@ -137,6 +144,18 @@ void TrackerSD::EndOfEvent(G4HCofThisEvent*)
 
   G4ThreeVector randCenterPos(xRand + hitPos.x(), yRand + hitPos.y(), zRand + hitPos.z());
 
+  // Solo per la visualizzazione: registra dominio e hit scelta (non influisce sui calcoli)
+  if (nofHits > 0 && hce) {
+    G4int domID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[1]);
+    auto* domCol = static_cast<DomainHitsCollection*>(hce->GetHC(domID));
+    if (domCol) {
+      std::vector<G4ThreeVector> allPos;
+      allPos.reserve(nofHits);
+      for (G4int i = 0; i < nofHits; i++) allPos.push_back((*fHitsCollection)[i]->GetPos());
+      domCol->insert(new DomainHit(randCenterPos, radius, hitPos, std::move(allPos)));
+    }
+  }
+
   // Search for neighbouring hits in the sphere and cumulate deposited energy
   //  in epsilon
   G4double epsilon = 0;
@@ -192,6 +211,7 @@ void TrackerSD::EndOfEvent(G4HCofThisEvent*)
   analysisManager->FillNtupleDColumn(4, (epsilon / eV) / (chord / nm));
   analysisManager->FillNtupleDColumn(5, (epsilon / mass) / gray);
   analysisManager->FillNtupleDColumn(6, Einc / eV);
+  analysisManager->FillNtupleDColumn(9, randCenterPos.mag() / um); // distanza del centro del dominio dal centro del nucleo
   analysisManager->AddNtupleRow();
 }
 
