@@ -640,3 +640,8 @@ G4WT4 > ... set ntuple merging row mode : row-wise - done
 G4WT5 > ### Run 0 starts on worker thread 5.
 G4WT5 > ... set ntuple merging row mode : row-wise - done
 G4WT5 > --> Event 1000 starts with initial seeds (54018613,94346304).
+G4WT7 > --> Event 2000 starts with initial seeds (98718244,15580199).
+G4WT1 > --> Event 3000 starts with initial seeds (48696191,45347333).
+G4WT3 > --> Event 4000 starts with initial seeds (77165529,19109675).
+G4WT4 > --> Event 5000 starts with initial seeds (52934862,72061376).
+G4WT7 > --> Event 6000 starts with initial seeds (87816839,49411962).
