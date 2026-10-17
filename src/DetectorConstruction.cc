@@ -21,8 +21,8 @@ DetectorConstruction::DetectorConstruction() : G4VUserDetectorConstruction()
   // Parametri standard della cellula
 
   fWorldRadius = 10 * CLHEP::m;
-  fCytoThickness = 10 * CLHEP::nm;
-  fNuclRadius = 3 * CLHEP::nm;
+  fCytoThickness = 1 * CLHEP::nm;
+  fNuclRadius = 4 * CLHEP::nm;
   
   // Qui scrivo DefineMaterials() perché è necessario definire i materiali prima di costruire il rivelatore, 
   // altrimenti non sarebbe possibile costruire il rivelatore usando quei materiali.
@@ -46,13 +46,9 @@ DetectorConstruction::~DetectorConstruction()
 // che è un manager dei materiali predefiniti in Geant4.
 void DetectorConstruction::DefineMaterials()
 {
-
   G4NistManager* nist = G4NistManager::Instance();
 
   fWaterMaterial = nist->FindOrBuildMaterial("G4_WATER");
-  
-  G4double CytoDensity = 1.05 * CLHEP::g/CLHEP::cm3;
-  fCytoMaterial = fNuclMaterial = new G4Material("Cytoplasm", CytoDensity, fWaterMaterial);
 
   fWorldMaterial = nist->FindOrBuildMaterial("G4_Galactic");
 }
@@ -76,7 +72,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   G4Sphere* sNucl = new G4Sphere("Nucl", 0., fNuclRadius, 0., twopi, 0., pi);
 
-  fLogicalNucl = new G4LogicalVolume(sNucl, fNuclMaterial, "Nucl");
+  fLogicalNucl = new G4LogicalVolume(sNucl, fWaterMaterial, "Nucl");
 
   fNucl = new G4PVPlacement(0, G4ThreeVector(), "Nucl", fLogicalNucl, fWorld, false, 0);
 
@@ -85,7 +81,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Sphere* sCyto =
     new G4Sphere("Cyto", fNuclRadius, fNuclRadius + fCytoThickness, 0., twopi, 0., pi);
 
-  fLogicalCyto = new G4LogicalVolume(sCyto, fCytoMaterial, "Cyto");
+  fLogicalCyto = new G4LogicalVolume(sCyto, fWaterMaterial, "Cyto");
 
   fCyto = new G4PVPlacement(0, G4ThreeVector(), "Cyto", fLogicalCyto, fWorld, false, 0);
   //
@@ -160,7 +156,7 @@ void DetectorConstruction::SetWorldMaterial(const G4String& materialChoice)
     fWorldMaterial = pttoMaterial;
     if (fLogicalWorld) fLogicalWorld->SetMaterial(pttoMaterial);
     G4RunManager::GetRunManager()->PhysicsHasBeenModified();  // Questa istruzione è necessaria per informare il run manager che la fisica del rivelatore è stata modificata,
-                                                             // e quindi che è necessario aggiornare le tabelle di cross section e di energia,
+   // e quindi che è necessario aggiornare le tabelle di cross section e di energia,
   }
 }
 

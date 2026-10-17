@@ -64,6 +64,8 @@ class Run : public G4Run
     void AddNuclEdep(G4double e);
     G4double GetNuclEdep() const { return fNuclEdeposit; };
 
+    void AddTotEdep(G4double e);
+
     virtual void Merge(const G4Run*);
 
     void EndOfRun();
@@ -74,6 +76,7 @@ class Run : public G4Run
     G4double fEkin;
     G4double fCellEdeposit, fCellEdeposit2;
     G4double fNuclEdeposit, fNuclEdeposit2;
+    G4double fTotEdeposit, fTotEdeposit2;
     G4double fTrackLen, fTrackLen2;
     G4double fProjRange, fProjRange2;
     G4int fNbOfSteps, fNbOfSteps2;

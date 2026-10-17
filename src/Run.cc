@@ -32,7 +32,9 @@ Run::Run(const DetectorConstruction* detector)
     fNbOfSteps(0),
     fNbOfSteps2(0),
     fStepSize(0.),
-    fStepSize2(0.)
+    fStepSize2(0.),
+    fTotEdeposit(0.),
+    fTotEdeposit2(0.)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -45,6 +47,14 @@ void Run::SetPrimary(G4ParticleDefinition* particle, G4double energy)
 {
   fParticle = particle;
   fEkin = energy;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void Run::AddTotEdep(G4double e)
+{
+  fTotEdeposit += e;
+  fTotEdeposit2 += e * e;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -106,6 +116,8 @@ void Run::Merge(const G4Run* run)
   fCellEdeposit2 += localRun->fCellEdeposit2;
   fNuclEdeposit += localRun->fNuclEdeposit;
   fNuclEdeposit2 += localRun->fNuclEdeposit2;
+  fTotEdeposit += localRun->fTotEdeposit;
+  fTotEdeposit2 += localRun->fTotEdeposit2;
 
   fTrackLen += localRun->fTrackLen;
   fTrackLen2 += localRun->fTrackLen2;
@@ -192,6 +204,23 @@ void Run::EndOfRun()
   G4cout << "\n S value for nucleus (N<-N) = " << sValueNucl / gray << " mGy/Bq.s "
          << " +- " << rmsSValueNucl / gray << " mGy/Bq.s " << G4endl;
 
+  // S-value per l'intera cellula (citoplasma + nucleo)
+  fTotEdeposit /= numberOfEvent;
+  fTotEdeposit2 /= numberOfEvent;
+  G4double rmsTot = fTotEdeposit2 - fTotEdeposit * fTotEdeposit;
+  rmsTot = (rmsTot > 0.) ? std::sqrt(rmsTot) : 0.;
+  G4double semTot = rmsTot / std::sqrt(static_cast<G4double>(numberOfEvent));
+
+  G4double cellMass = fDetector->GetCytoMass() + fDetector->GetNuclMass();
+  G4double sValueCell = fTotEdeposit / cellMass * 1000.;
+  G4double rmsSValueCell = semTot / cellMass * 1000.;
+
+  G4cout.precision(6);
+  G4cout << "\n Total Energy deposited in whole cell = " << G4BestUnit(fTotEdeposit, "Energy")
+         << " +- " << G4BestUnit(semTot, "Energy") << G4endl;
+  G4cout << "\n S value for whole cell = " << sValueCell / gray << " mGy/Bq.s "
+         << " +- " << rmsSValueCell / gray << " mGy/Bq.s " << G4endl;       
+
   // Compute track length of primary track
 
   fTrackLen /= numberOfEvent;
@@ -264,8 +293,8 @@ void Run::EndOfRun()
   FILE* myFile;
   myFile = fopen(outFileName.c_str(), "a");
 
-  fprintf(myFile, "%e %e %e %e %e %e %e \n", fDetector->GetNuclRadius() / nm,
+  fprintf(myFile, "%e %e %e %e %e %e %e %e %e \n", fDetector->GetNuclRadius() / nm,
           fDetector->GetCytoThickness() / nm, fEkin / eV, sValueCyto / gray, rmsSValueCyto / gray,
-          sValueNucl / gray, rmsSValueNucl / gray);
+          sValueNucl / gray, rmsSValueNucl / gray, sValueCell / gray, rmsSValueCell / gray);
   fclose(myFile);
 }
