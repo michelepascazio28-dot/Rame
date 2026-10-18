@@ -39,9 +39,9 @@ void EventAction::EndOfEventAction(const G4Event*)
     analysisManager->FillH1(6, fNuclEdep);
   }
 
-  // Energia totale nella cellula (citoplasma + nucleo), per evento
-  G4double totEdep = fCellEdep + fNuclEdep;
-  if (totEdep > 0.) {
-    run->AddTotEdep(totEdep);
+  // Energia nel solo citoplasma (fCellEdep = cellula intera, fNuclEdep = nucleo)
+  G4double cytoEdep = std::max(0., fCellEdep - fNuclEdep);
+  if (cytoEdep > 0.) {
+    run->AddTotEdep(cytoEdep);   // fTotEdeposit ora = citoplasma
   }
 }

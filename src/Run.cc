@@ -12,6 +12,7 @@
 #include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
 
+#include <cmath>
 #include <cstdlib>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -51,6 +52,8 @@ void Run::SetPrimary(G4ParticleDefinition* particle, G4double energy)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+// ATTENZIONE: fTotEdeposit contiene l'energia nel SOLO CITOPLASMA per evento
+// (EventAction::EndOfEventAction chiama AddTotEdep(fCellEdep - fNuclEdep)).
 void Run::AddTotEdep(G4double e)
 {
   fTotEdeposit += e;
@@ -59,6 +62,8 @@ void Run::AddTotEdep(G4double e)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+// ATTENZIONE: fCellEdeposit contiene l'energia nell'INTERA CELLULA per evento
+// (SteppingAction somma i depositi in Cyto e in Nucl).
 void Run::AddCellEdep(G4double e)
 {
   fCellEdeposit += e;
@@ -153,73 +158,63 @@ void Run::EndOfRun()
     return;
   }
 
-  // Compute S-value for cytoplasm (C<-C)
+  // ---------------------------------------------------------------------------
+  // S-value di intera cellula (C), nucleo (N) e citoplasma (Cy), per la sorgente
+  // attiva in PrimaryGeneratorAction:
+  //   fCellEdeposit : energia nell'intera cellula (Cyto + Nucl)
+  //   fNuclEdeposit : energia nel solo nucleo
+  //   fTotEdeposit  : energia nel solo citoplasma (= cellula - nucleo, evento per evento)
+  // ---------------------------------------------------------------------------
 
-  fCellEdeposit /= numberOfEvent;
-  fCellEdeposit2 /= numberOfEvent;
-  G4double rmsCyto = fCellEdeposit2 - fCellEdeposit * fCellEdeposit;
-  if (rmsCyto > 0.)
-    rmsCyto = std::sqrt(rmsCyto);
-  else
-    rmsCyto = 0.;
+  const G4double nEv = static_cast<G4double>(numberOfEvent);
+  const G4double mCyto = fDetector->GetCytoMass();
+  const G4double mNucl = fDetector->GetNuclMass();
+  const G4double mCell = mCyto + mNucl;
 
-  G4double semCyto = rmsCyto / std::sqrt(static_cast<G4double>(numberOfEvent));
+  // Trasforma le somme in medie per evento e restituisce l'errore standard della media
+  auto meanAndSem = [nEv](G4double& sum, G4double& sum2) {
+    sum /= nEv;
+    sum2 /= nEv;
+    G4double var = sum2 - sum * sum;
+    return (var > 0.) ? std::sqrt(var / nEv) : 0.;
+  };
+
+  G4double semCell = meanAndSem(fCellEdeposit, fCellEdeposit2);
+  G4double semNucl = meanAndSem(fNuclEdeposit, fNuclEdeposit2);
+  G4double semCyto = meanAndSem(fTotEdeposit, fTotEdeposit2);
+
+  // Intera cellula
+  G4double sValueCell = fCellEdeposit / mCell * 1000.;      // Gy/Bq.s -> mGy/Bq.s
+  G4double rmsSValueCell = semCell / mCell * 1000.;
+
+  // Nucleo
+  G4double sValueNucl = fNuclEdeposit / mNucl * 1000.;
+  G4double rmsSValueNucl = semNucl / mNucl * 1000.;
+
+  // Solo citoplasma
+  G4double sValueCyto = fTotEdeposit / mCyto * 1000.;
+  G4double rmsSValueCyto = semCyto / mCyto * 1000.;
 
   G4cout.precision(6);
-  G4cout << "\n Total Energy deposited in cytoplasm = " << G4BestUnit(fCellEdeposit, "Energy")
-        << " +- " << G4BestUnit(semCyto, "Energy") << G4endl;   
+  G4cout << "\n Total Energy deposited in whole cell = " << G4BestUnit(fCellEdeposit, "Energy")
+         << " +- " << G4BestUnit(semCell, "Energy") << G4endl;
+  G4cout << "\n S value for whole cell (C)  = " << sValueCell / gray << " mGy/Bq.s "
+         << " +- " << rmsSValueCell / gray << " mGy/Bq.s " << G4endl;
 
-  G4double sValueCyto = fCellEdeposit / fDetector->GetCytoMass();
-  G4double rmsSValueCyto = semCyto / fDetector->GetCytoMass();
-
-  sValueCyto *= 1000.;
-  rmsSValueCyto *= 1000.;
-
-  G4cout.precision(6);
-  G4cout << "\n S value for cytoplasm (C<-N) = " << sValueCyto / gray << " mGy/Bq.s "
-       << " +- " << rmsSValueCyto / gray << " mGy/Bq.s " << G4endl;
-
-  // Compute S-value for nucleus (N<-C)
-
-  fNuclEdeposit /= numberOfEvent;
-  fNuclEdeposit2 /= numberOfEvent;
-  G4double rmsNucl = fNuclEdeposit2 - fNuclEdeposit * fNuclEdeposit;
-  if (rmsNucl > 0.)
-    rmsNucl = std::sqrt(rmsNucl);
-  else
-    rmsNucl = 0.;
-
-  G4double semNucl = rmsNucl / std::sqrt(static_cast<G4double>(numberOfEvent));
-
-  G4cout.precision(6);
   G4cout << "\n Total Energy deposited in nucleus = " << G4BestUnit(fNuclEdeposit, "Energy")
          << " +- " << G4BestUnit(semNucl, "Energy") << G4endl;
-
-  G4double sValueNucl = fNuclEdeposit / fDetector->GetNuclMass();
-  G4double rmsSValueNucl = semNucl / fDetector->GetNuclMass();
-  sValueNucl *= 1000.; // Convert from Gy/Bq.s to mGy/Bq.s
-  rmsSValueNucl *= 1000.; // Convert from Gy/Bq.s to mGy/Bq
-
-  G4cout.precision(6);
-  G4cout << "\n S value for nucleus (N<-N) = " << sValueNucl / gray << " mGy/Bq.s "
+  G4cout << "\n S value for nucleus (N)     = " << sValueNucl / gray << " mGy/Bq.s "
          << " +- " << rmsSValueNucl / gray << " mGy/Bq.s " << G4endl;
 
-  // S-value per l'intera cellula (citoplasma + nucleo)
-  fTotEdeposit /= numberOfEvent;
-  fTotEdeposit2 /= numberOfEvent;
-  G4double rmsTot = fTotEdeposit2 - fTotEdeposit * fTotEdeposit;
-  rmsTot = (rmsTot > 0.) ? std::sqrt(rmsTot) : 0.;
-  G4double semTot = rmsTot / std::sqrt(static_cast<G4double>(numberOfEvent));
+  G4cout << "\n Total Energy deposited in cytoplasm only = " << G4BestUnit(fTotEdeposit, "Energy")
+         << " +- " << G4BestUnit(semCyto, "Energy") << G4endl;
+  G4cout << "\n S value for cytoplasm (Cy)  = " << sValueCyto / gray << " mGy/Bq.s "
+         << " +- " << rmsSValueCyto / gray << " mGy/Bq.s " << G4endl;
 
-  G4double cellMass = fDetector->GetCytoMass() + fDetector->GetNuclMass();
-  G4double sValueCell = fTotEdeposit / cellMass * 1000.;
-  G4double rmsSValueCell = semTot / cellMass * 1000.;
-
-  G4cout.precision(6);
-  G4cout << "\n Total Energy deposited in whole cell = " << G4BestUnit(fTotEdeposit, "Energy")
-         << " +- " << G4BestUnit(semTot, "Energy") << G4endl;
-  G4cout << "\n S value for whole cell = " << sValueCell / gray << " mGy/Bq.s "
-         << " +- " << rmsSValueCell / gray << " mGy/Bq.s " << G4endl;       
+  // Controllo di coerenza: S(C) = (M_cyto * S(Cy) + M_nucl * S(N)) / M_cell
+  G4double sValueCellCheck = (mCyto * sValueCyto + mNucl * sValueNucl) / mCell;
+  G4cout << "\n Check S(C) da media pesata sulle masse = " << sValueCellCheck / gray
+         << " mGy/Bq.s (deve coincidere con S(C))" << G4endl;
 
   // Compute track length of primary track
 
@@ -288,13 +283,18 @@ void Run::EndOfRun()
 
   // Output file
   // serve per creare i nomi delle batches
+  // Colonne: R_nucl[nm] spessore_cito[nm] E_prim[eV]
+  //          S_cito err  S_nucl err  S_cell err      (mGy/Bq.s)
+  // S_cito = solo citoplasma, S_cell = intera cellula (nuovo significato, vedi sopra)
   const char* batchTag = std::getenv("BATCH_TAG");
   G4String outFileName = batchTag ? (G4String("s_") + batchTag + ".txt") : G4String("s.txt");
-  FILE* myFile;
-  myFile = fopen(outFileName.c_str(), "a");
+  FILE* myFile = fopen(outFileName.c_str(), "a");
 
-  fprintf(myFile, "%e %e %e %e %e %e %e %e %e \n", fDetector->GetNuclRadius() / nm,
-          fDetector->GetCytoThickness() / nm, fEkin / eV, sValueCyto / gray, rmsSValueCyto / gray,
-          sValueNucl / gray, rmsSValueNucl / gray, sValueCell / gray, rmsSValueCell / gray);
-  fclose(myFile);
+  if (myFile) {
+    fprintf(myFile, "%e %e %e %e %e %e %e %e %e \n", fDetector->GetNuclRadius() / nm,
+            fDetector->GetCytoThickness() / nm, fEkin / eV, sValueCyto / gray,
+            rmsSValueCyto / gray, sValueNucl / gray, rmsSValueNucl / gray, sValueCell / gray,
+            rmsSValueCell / gray);
+    fclose(myFile);
+  }
 }

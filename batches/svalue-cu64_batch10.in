@@ -1,7 +1,7 @@
 # MT
 /run/numberOfThreads 8
 # Random seed for batches
-/random/setSeeds 1501230767 651518584
+/random/setSeeds 1716031487 1427826508
 #
 # Atomic deexcitation activation
 /process/em/deexcitationIgnoreCut true
